@@ -28,8 +28,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-console.log(L.Icon.Default.prototype.options)
-
 const targetMarker = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -74,21 +72,40 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        latlng: {lat:-22.8066, lng: -43.2114},
-        arrPolyIndex: 0
+        mainMarkerLatLng: {lat:-22.8066, lng: -43.2114},
+        arrPolyIndex: 0,
+        placesMarkerList: [[-22.8066, -43.2105], [-22.8060, -43.2100]],
+        mainPolyline: []
     }
   }
 
   componentDidMount() {
-      console.log(this.state.latlng);
+      console.log(this.state.mainMarkerLatLng);
   }
 
-  startPathHandler = (Place) => {
+  startPathHandler = (target) => {
+      const targetLatlng = this.pointToLatlng(target) 
       this.setState((state)=> ({
-          latlng: { lat: Place[0], lng: Place[1]},
-      }), () => {
-        console.log("Hello")
-      })
+        mainMarkerLatLng: targetLatlng,
+      }))
+  }
+
+  pointToLatlng = (point) => {
+      return {
+        lat: point[0], lng: point[1]
+      }
+  }
+
+  latLangToPoint = (latLang) => {
+      return [latLang.lat, latLang.lng]
+  }
+
+  makePolylinePath = ()=>{
+    this.setState((state)=>({
+        mainPolyline: [this.latLangToPoint(state.mainMarkerLatLng), ...state.placesMarkerList]
+    }), ()=>{
+      console.log(this.state)
+    })
   }
 
   render(){
@@ -98,9 +115,9 @@ export default class App extends React.Component {
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Polyline pathOptions={blackOptions} positions={myPolyline} />
+          <Polyline pathOptions={blackOptions} positions={this.state.mainPolyline} />
           <ReactLeafletDriftMarker
-            position={this.state.latlng}
+            position={this.state.mainMarkerLatLng}
             duration={5000}
             eventHandlers={{
               click: () => {
@@ -127,7 +144,7 @@ export default class App extends React.Component {
             <Tooltip>Main Stop</Tooltip>
           </Marker>
         </MapContainer>
-        {/* <button onClick={()=> this.startPathHandler(Place2)}>Start</button> */}
+        <button onClick={()=> this.makePolylinePath()}>Make Path</button>
       </>
 
     );
