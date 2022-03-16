@@ -28,6 +28,28 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+console.log(L.Icon.Default.prototype.options)
+
+const targetMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+  tooltipAnchor: [16, -28]
+});
+
+const startedMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+  tooltipAnchor: [16, -28]
+});
+
 const center = [-22.8066667, -43.2105167]
 
 // Latitude --> 90 to -90
@@ -58,7 +80,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-      // console.log(this.state.latlng);
+      console.log(this.state.latlng);
   }
 
   startPathHandler = (Place) => {
@@ -85,24 +107,27 @@ export default class App extends React.Component {
                 this.startPathHandler(Place2)
               },
             }}
+            icon={startedMarker}
           >
             <Popup>
-              A pretty CSS3 popup.<br /> Easily customizable.
+              Start Main Car Marker <br />
             </Popup>
-            <Tooltip>Tooltip for Marker</Tooltip>
+            <Tooltip>Car</Tooltip>
           </ReactLeafletDriftMarker>
           <Marker position={Place2}>
             <Popup>
-              Place 2. <br /> Easily customizable.
+              Getting Fuel <br />
             </Popup>
+            <Tooltip>Gas station</Tooltip>
           </Marker>
-          <Marker position={Place3}>
+          <Marker position={Place3} icon={targetMarker}>
             <Popup>
-              Place 2. <br /> Easily customizable.
+              End Path.
             </Popup>
+            <Tooltip>Main Stop</Tooltip>
           </Marker>
         </MapContainer>
-        <button onClick={()=> this.startPathHandler(Place2)}>Start</button>
+        {/* <button onClick={()=> this.startPathHandler(Place2)}>Start</button> */}
       </>
 
     );
