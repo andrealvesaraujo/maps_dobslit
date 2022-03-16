@@ -20,15 +20,13 @@ import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+delete L.Icon.Default.prototype._getIconUrl;
 
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-
-L.Marker.prototype.options.icon = DefaultIcon;
 
 const center = [-22.8066667, -43.2105167]
 
@@ -38,11 +36,13 @@ const center = [-22.8066667, -43.2105167]
 // Longitude --> (esquerda, valores longe do zero) Oeste/Leste (direita, valores perto do zero)
 const Place1 = [-22.8066, -43.2114]
 const Place2 = [-22.8066, -43.2105]
+const Place3 = [-22.8060, -43.2100]
 
 
 const myPolyline = [
   Place1,
   Place2,
+  Place3
 ]
 
 const blackOptions = { color: 'black' }
@@ -52,14 +52,21 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        latlng: {lat:-22.8066, lng: -43.2114}
+        latlng: {lat:-22.8066, lng: -43.2114},
+        arrPolyIndex: 0
     }
+  }
+
+  componentDidMount() {
+      // console.log(this.state.latlng);
   }
 
   startPathHandler = (Place) => {
       this.setState((state)=> ({
           latlng: { lat: Place[0], lng: Place[1]},
-      }))
+      }), () => {
+        console.log("Hello")
+      })
   }
 
   render(){
@@ -85,6 +92,11 @@ export default class App extends React.Component {
             <Tooltip>Tooltip for Marker</Tooltip>
           </ReactLeafletDriftMarker>
           <Marker position={Place2}>
+            <Popup>
+              Place 2. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+          <Marker position={Place3}>
             <Popup>
               Place 2. <br /> Easily customizable.
             </Popup>
