@@ -72,22 +72,40 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        mainMarkerLatLng: {lat:-22.8066, lng: -43.2114},
+        mainMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
         arrPolyIndex: 0,
+        startedMarkerPoint: [-22.8066, -43.2114],
         placesMarkerList: [[-22.8066, -43.2105], [-22.8060, -43.2100]],
         mainPolyline: []
     }
   }
 
   componentDidMount() {
-      console.log(this.state.mainMarkerLatLng);
+      console.log(this.state.mainMarkerPositionLatLng);
   }
 
   startPathHandler = (target) => {
-      const targetLatlng = this.pointToLatlng(target) 
+    const targetLatlng = this.pointToLatlng(target) 
+    this.setState((state)=> ({
+      mainMarkerPositionLatLng: targetLatlng,
+    }))
+  }
+
+  continuePathHandler = (target)=> {
+    const targetLatlng = this.pointToLatlng(target) 
       this.setState((state)=> ({
-        mainMarkerLatLng: targetLatlng,
-      }))
+        mainMarkerPositionLatLng: targetLatlng,
+    }))
+  }
+  
+  makePolylinePath = ()=>{
+    this.setState((state)=>({
+        mainPolyline: [this.latLangToPoint(state.mainMarkerPositionLatLng), ...state.placesMarkerList]
+    }))
+  }
+
+  resetMap = ()=> {
+    document.location.reload(true);
   }
 
   pointToLatlng = (point) => {
@@ -100,13 +118,6 @@ export default class App extends React.Component {
       return [latLang.lat, latLang.lng]
   }
 
-  makePolylinePath = ()=>{
-    this.setState((state)=>({
-        mainPolyline: [this.latLangToPoint(state.mainMarkerLatLng), ...state.placesMarkerList]
-    }), ()=>{
-      console.log(this.state)
-    })
-  }
 
   render(){
     return (
@@ -117,12 +128,15 @@ export default class App extends React.Component {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Polyline pathOptions={blackOptions} positions={this.state.mainPolyline} />
           <ReactLeafletDriftMarker
-            position={this.state.mainMarkerLatLng}
+            position={this.state.mainMarkerPositionLatLng}
             duration={5000}
             eventHandlers={{
               click: () => {
                 this.startPathHandler(Place2)
               },
+              moveend: ()=>{
+                this.continuePathHandler(Place3)
+              }
             }}
             icon={startedMarker}
           >
@@ -144,7 +158,9 @@ export default class App extends React.Component {
             <Tooltip>Main Stop</Tooltip>
           </Marker>
         </MapContainer>
-        <button onClick={()=> this.makePolylinePath()}>Make Path</button>
+        <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
+        <button className="secondary" onClick={()=> this.startPathHandler(Place2)}>Begin Travel</button>
+        <button className="reset" onClick={()=> this.resetMap()}>Reset Map</button>
       </>
 
     );

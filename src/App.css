@@ -5,3 +5,42 @@
   height: 100vh;
   z-index: 1;
 }
+
+.primary {
+  position: absolute;
+  z-index: 2;
+  top: 5%;
+  left: 10%;
+  padding:15px;
+  background-color:blue;
+  border-radius: 30px;
+  border: 1px solid blue;
+  color: white;
+  cursor: pointer;
+}
+
+.secondary {
+  position: absolute;
+  z-index: 2;
+  top: 15%;
+  left: 10%;
+  padding:15px;
+  background-color:green;
+  border-radius: 30px;
+  border: 1px solid green;
+  color: white;
+  cursor: pointer;
+}
+
+.reset {
+  position: absolute;
+  z-index: 2;
+  top: 25%;
+  left: 10%;
+  padding:15px;
+  background-color:red;
+  border-radius: 30px;
+  border: 1px solid red;
+  color: white;
+  cursor: pointer;
+}
