@@ -76,6 +76,13 @@ export default class App extends React.Component {
       console.log(this.state);
   }
 
+  addMarker = (pointLat,pointLng) => {
+      const newPlaceMarker = [pointLat,pointLng]
+      this.setState((state)=> ({
+        placesMarkerList: [...state.placesMarkerList,newPlaceMarker],
+      }))
+  }
+
   startPathHandler = () => {
     const { placesListIndex, placesMarkerList } = this.state
     const target = placesMarkerList[placesListIndex]
@@ -167,6 +174,7 @@ export default class App extends React.Component {
               )
           })}
         </MapContainer>
+        <button className="newMarker" onClick={()=> this.addMarker(-22.8056, -43.2105)}>Add Marker</button>
         <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
         <button className="secondary" onClick={()=> this.startPathHandler()}>Begin Travel</button>
         <button className="reset" onClick={()=> this.resetMap()}>Reset Map</button>

@@ -6,10 +6,23 @@
   z-index: 1;
 }
 
-.primary {
+.newMarker {
   position: absolute;
   z-index: 2;
   top: 5%;
+  left: 10%;
+  padding:15px;
+  background-color: black;
+  border-radius: 30px;
+  border: 1px solid black;
+  color: white;
+  cursor: pointer;
+}
+
+.primary {
+  position: absolute;
+  z-index: 2;
+  top: 15%;
   left: 10%;
   padding:15px;
   background-color:blue;
@@ -22,7 +35,7 @@
 .secondary {
   position: absolute;
   z-index: 2;
-  top: 15%;
+  top: 25%;
   left: 10%;
   padding:15px;
   background-color:green;
@@ -35,7 +48,7 @@
 .reset {
   position: absolute;
   z-index: 2;
-  top: 25%;
+  top: 35%;
   left: 10%;
   padding:15px;
   background-color:red;
