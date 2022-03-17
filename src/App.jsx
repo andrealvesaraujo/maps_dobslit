@@ -54,52 +54,52 @@ const center = [-22.8066667, -43.2105167]
 // Longitude --> 180 to -180
 // Latitude --> (perto do zero) Norte/Sul (longe do zero), 
 // Longitude --> (esquerda, valores longe do zero) Oeste/Leste (direita, valores perto do zero)
-const Place1 = [-22.8066, -43.2114]
-const Place2 = [-22.8066, -43.2105]
-const Place3 = [-22.8060, -43.2100]
-
-
-const myPolyline = [
-  Place1,
-  Place2,
-  Place3
-]
+// const Place1 = [-22.8066, -43.2114]
+// const Place2 = [-22.8066, -43.2105]
+// const Place3 = [-22.8060, -43.2100]
 
 const blackOptions = { color: 'black' }
-
 export default class App extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
         mainMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
-        arrPolyIndex: 0,
+        placesListIndex: 0,
         startedMarkerPoint: [-22.8066, -43.2114],
-        placesMarkerList: [[-22.8066, -43.2105], [-22.8060, -43.2100]],
+        placesMarkerList: [[-22.8066, -43.2105], [-22.8060, -43.2100], [-22.8060, -43.2085]],
         mainPolyline: []
     }
   }
 
   componentDidMount() {
-      console.log(this.state.mainMarkerPositionLatLng);
+      console.log(this.state);
   }
 
-  startPathHandler = (target) => {
+  startPathHandler = () => {
+    const { placesListIndex, placesMarkerList } = this.state
+    const target = placesMarkerList[placesListIndex]
     const targetLatlng = this.pointToLatlng(target) 
     this.setState((state)=> ({
       mainMarkerPositionLatLng: targetLatlng,
+      placesListIndex: placesListIndex+1
     }))
   }
 
-  continuePathHandler = (target)=> {
+  continuePathHandler = ()=> {
+    const { placesListIndex, placesMarkerList } = this.state
+    if(placesListIndex >= placesMarkerList.length) return
+    const target = placesMarkerList[placesListIndex]
     const targetLatlng = this.pointToLatlng(target) 
       this.setState((state)=> ({
         mainMarkerPositionLatLng: targetLatlng,
+        placesListIndex: placesListIndex+1
     }))
   }
   
   makePolylinePath = ()=>{
     this.setState((state)=>({
+        placesListIndex:0,
         mainPolyline: [this.latLangToPoint(state.mainMarkerPositionLatLng), ...state.placesMarkerList]
     }))
   }
@@ -118,7 +118,6 @@ export default class App extends React.Component {
       return [latLang.lat, latLang.lng]
   }
 
-
   render(){
     return (
       <>
@@ -132,10 +131,10 @@ export default class App extends React.Component {
             duration={5000}
             eventHandlers={{
               click: () => {
-                this.startPathHandler(Place2)
+                this.startPathHandler()
               },
               moveend: ()=>{
-                this.continuePathHandler(Place3)
+                this.continuePathHandler()
               }
             }}
             icon={startedMarker}
@@ -145,7 +144,7 @@ export default class App extends React.Component {
             </Popup>
             <Tooltip>Car</Tooltip>
           </ReactLeafletDriftMarker>
-          <Marker position={Place2}>
+          {/* <Marker position={Place2}>
             <Popup>
               Getting Fuel <br />
             </Popup>
@@ -156,10 +155,20 @@ export default class App extends React.Component {
               End Path.
             </Popup>
             <Tooltip>Main Stop</Tooltip>
-          </Marker>
+          </Marker> */}
+          {this.state.placesMarkerList.map((markerPosition, index, arr)=>{
+              return (
+                <Marker key={`key_${index}`} position={markerPosition} icon={index === arr.length-1 ? targetMarker : new L.Icon.Default()}>
+                  <Popup>
+                    End Path.
+                  </Popup>
+                  <Tooltip>Main Stop</Tooltip>
+                </Marker>
+              )
+          })}
         </MapContainer>
         <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
-        <button className="secondary" onClick={()=> this.startPathHandler(Place2)}>Begin Travel</button>
+        <button className="secondary" onClick={()=> this.startPathHandler()}>Begin Travel</button>
         <button className="reset" onClick={()=> this.resetMap()}>Reset Map</button>
       </>
 
