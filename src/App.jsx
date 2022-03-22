@@ -10,6 +10,8 @@ import {
   Popup,
   Rectangle,
   Tooltip,
+  useMapEvents,
+  useMapEvent,
   TileLayer,
   Marker,
 } from 'react-leaflet'
@@ -28,24 +30,29 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const targetMarker = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+const sharedMarkerProps = {
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
-  tooltipAnchor: [16, -28]
+  tooltipAnchor: [16, -28],
+}
+
+const vehicleMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
+  ...sharedMarkerProps,
+  className: "movingVehicle"
 });
 
 const startedMarker = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-  tooltipAnchor: [16, -28]
+  ...sharedMarkerProps,
+});
+
+const targetMarker = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  ...sharedMarkerProps,
 });
 
 const center = [-22.8066667, -43.2105167]
@@ -64,10 +71,10 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        mainMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
+        vehicleMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
         placesListIndex: 0,
         startedMarkerPoint: [-22.8066, -43.2114],
-        placesMarkerList: [[-22.8066, -43.2105], [-22.8060, -43.2100], [-22.8060, -43.2085]],
+        placesMarkerList: [[-22.8066, -43.2114], [-22.8066, -43.2105], [-22.8060, -43.2100], [-22.8060, -43.2085]],
         mainPolyline: []
     }
   }
@@ -84,11 +91,15 @@ export default class App extends React.Component {
   }
 
   startPathHandler = () => {
-    const { placesListIndex, placesMarkerList } = this.state
+    const { placesListIndex, placesMarkerList, mainPolyline } = this.state
+    if(!mainPolyline.length) {
+      console.log("Click on 'Make the Path'")
+      return 
+    } 
     const target = placesMarkerList[placesListIndex]
     const targetLatlng = this.pointToLatlng(target) 
     this.setState((state)=> ({
-      mainMarkerPositionLatLng: targetLatlng,
+      vehicleMarkerPositionLatLng: targetLatlng,
       placesListIndex: placesListIndex+1
     }))
   }
@@ -99,7 +110,7 @@ export default class App extends React.Component {
     const target = placesMarkerList[placesListIndex]
     const targetLatlng = this.pointToLatlng(target) 
       this.setState((state)=> ({
-        mainMarkerPositionLatLng: targetLatlng,
+        vehicleMarkerPositionLatLng: targetLatlng,
         placesListIndex: placesListIndex+1
     }))
   }
@@ -107,7 +118,7 @@ export default class App extends React.Component {
   makePolylinePath = ()=>{
     this.setState((state)=>({
         placesListIndex:0,
-        mainPolyline: [this.latLangToPoint(state.mainMarkerPositionLatLng), ...state.placesMarkerList]
+        mainPolyline: [state.startedMarkerPoint, ...state.placesMarkerList]
     }))
   }
 
@@ -134,7 +145,7 @@ export default class App extends React.Component {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Polyline pathOptions={blackOptions} positions={this.state.mainPolyline} />
           <ReactLeafletDriftMarker
-            position={this.state.mainMarkerPositionLatLng}
+            position={this.state.vehicleMarkerPositionLatLng}
             duration={5000}
             eventHandlers={{
               click: () => {
@@ -144,10 +155,10 @@ export default class App extends React.Component {
                 this.continuePathHandler()
               }
             }}
-            icon={startedMarker}
+            icon={vehicleMarker}
           >
             <Popup>
-              Start Main Car Marker <br />
+              Main Car<br />
             </Popup>
             <Tooltip>Car</Tooltip>
           </ReactLeafletDriftMarker>
@@ -163,15 +174,15 @@ export default class App extends React.Component {
             </Popup>
             <Tooltip>Main Stop</Tooltip>
           </Marker> */}
-          {this.state.placesMarkerList.map((markerPosition, index, arr)=>{
-              return (
-                <Marker key={`key_${index}`} position={markerPosition} icon={index === arr.length-1 ? targetMarker : new L.Icon.Default()}>
-                  <Popup>
-                    End Path.
-                  </Popup>
-                  <Tooltip>Main Stop</Tooltip>
-                </Marker>
-              )
+          {this.state.placesMarkerList.map((markerPosition, index, arr) =>{
+            return (
+              <Marker key={`key_${index}`} position={markerPosition} icon={index === 0 ? startedMarker : (index === arr.length-1 ? targetMarker : new L.Icon.Default())}>
+                <Popup>
+                  Place Marker Popup
+                </Popup>
+                <Tooltip>Tooltip of Marker</Tooltip>
+              </Marker>
+            )            
           })}
         </MapContainer>
         <button className="newMarker" onClick={()=> this.addMarker(-22.8056, -43.2105)}>Add Marker</button>

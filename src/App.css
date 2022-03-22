@@ -6,6 +6,10 @@
   z-index: 1;
 }
 
+.leaflet-container .leaflet-marker-pane .movingVehicle {
+  z-index: 500 !important;
+}
+
 .newMarker {
   position: absolute;
   z-index: 2;
