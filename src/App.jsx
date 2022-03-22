@@ -19,6 +19,9 @@ import {
 import { LeafletTrackingMarker } from "react-leaflet-tracking-marker";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
@@ -93,7 +96,7 @@ export default class App extends React.Component {
   startPathHandler = () => {
     const { placesListIndex, placesMarkerList, mainPolyline } = this.state
     if(!mainPolyline.length) {
-      console.log("Click on 'Make the Path'")
+      toast.error("Click on 'Make Path'", {theme: "colored", autoClose: 2500})
       return 
     } 
     const target = placesMarkerList[placesListIndex]
@@ -139,6 +142,7 @@ export default class App extends React.Component {
   render(){
     return (
       <>
+        <ToastContainer />
         <MapContainer center={center} zoom={18}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
