@@ -98,12 +98,16 @@ export default class App extends React.Component {
     if(!mainPolyline.length) {
       toast.error("Click on 'Make Path'", {theme: "colored", autoClose: 2500})
       return 
-    } 
-    const target = placesMarkerList[placesListIndex]
+    }
+    let index = placesListIndex
+    if(placesListIndex===0){
+      index=1
+    }
+    const target = placesMarkerList[index]
     const targetLatlng = this.pointToLatlng(target) 
     this.setState((state)=> ({
       vehicleMarkerPositionLatLng: targetLatlng,
-      placesListIndex: placesListIndex+1
+      placesListIndex: index+1
     }))
   }
 
