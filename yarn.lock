@@ -5610,7 +5610,14 @@ leaflet-drift-marker@^2.0.0:
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-2.0.0.tgz#7ab45dba09270b6fe59d31144c362f8f900e3243"
   integrity sha512-dmYMW5A/rpNA2YGnakMzhhQNGJADjJG1L6THa/UKMYZ/CI3podhmsCaWCNh0/DnqcxRaSCR/8JBp+iimNx7lEQ==
 
-leaflet@^1.7.1:
+leaflet-geosearch@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/leaflet-geosearch/-/leaflet-geosearch-3.6.0.tgz#1e2da4152e473df24467ca019334a981af9330c9"
+  integrity sha512-TkJOi+eVbsQB7wC0ssGzV9eGQv5BgEwDyb0QOunYA64qe53lB+ostUemvQD7Cmari0shtgBr3Patn5galjr3WA==
+  optionalDependencies:
+    leaflet "^1.6.0"
+
+leaflet@^1.6.0, leaflet@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
   integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==

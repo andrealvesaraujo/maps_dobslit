@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import L from 'leaflet';
-
 import {
   MapContainer,
   Polyline,
@@ -9,15 +8,18 @@ import {
   TileLayer,
   Marker,
 } from 'react-leaflet'
+import { useMap } from 'react-leaflet';
+import { ToastContainer, toast } from 'react-toastify';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 // import { LeafletTrackingMarker } from "react-leaflet-tracking-marker";
 // import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
-import { ToastContainer, toast } from 'react-toastify';
+import 'leaflet-geosearch/dist/geosearch.css';
 import 'react-toastify/dist/ReactToastify.css';
-
 import 'leaflet/dist/leaflet.css';
 import './App.css';
+
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -54,6 +56,7 @@ const targetMarker = new L.Icon({
 
 const center = [-22.8066667, -43.2105167]
 
+
 // Latitude --> 90 to -90
 // Longitude --> 180 to -180
 // Latitude --> (perto do zero) Norte/Sul (longe do zero), 
@@ -61,6 +64,25 @@ const center = [-22.8066667, -43.2105167]
 // const Place1 = [-22.8066, -43.2114]
 // const Place2 = [-22.8066, -43.2105]
 // const Place3 = [-22.8060, -43.2100]
+
+const SearchField = () => {
+  const provider = new OpenStreetMapProvider ();
+
+  // @ts-ignore
+  const searchControl = new GeoSearchControl({
+    notFoundMessage: 'Sorry, that address could not be found.',
+    provider: provider,
+    style: 'bar',
+  });
+
+  const map = useMap();
+  useEffect(() => {
+    map.addControl(searchControl);
+    return () => map.removeControl(searchControl);
+  }, []);
+
+  return null;
+};
 
 const mainPathLineOptions = { color: 'black' }
 export default class App extends React.Component {
@@ -143,6 +165,12 @@ export default class App extends React.Component {
       return [latLang.lat, latLang.lng]
   }
 
+  handlerSaveForm = (e) => {
+    e.preventDefault()
+    console.log("Validou e salvou")
+    console.log(e)
+  }
+
   render(){
     return (
       <>
@@ -151,6 +179,7 @@ export default class App extends React.Component {
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <SearchField />
           <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
           {/* <ReactLeafletDriftMarker
             position={this.state.vehicleMarkerPositionLatLng}
@@ -196,7 +225,7 @@ export default class App extends React.Component {
         <button className="newMarker" onClick={()=> this.addMarker(this.state.placesMarkerList[this.state.placesMarkerList.length-1][0], this.state.placesMarkerList[this.state.placesMarkerList.length-1][1])}>Add Marker</button>
         <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
         {/* <button className="secondary" onClick={()=> this.startPathHandler()}>Begin Travel</button> */}
-        <button className="reset" onClick={()=> this.resetMap()}>Reset Map</button>
+        <button className="resetMap" onClick={()=> this.resetMap()}>Reset Map</button>
       </>
 
     );
