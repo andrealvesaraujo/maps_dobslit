@@ -2,22 +2,16 @@ import React from 'react';
 import L from 'leaflet';
 
 import {
-  Circle,
-  CircleMarker,
   MapContainer,
   Polyline,
-  Polygon,
   Popup,
-  Rectangle,
   Tooltip,
-  useMapEvents,
-  useMapEvent,
   TileLayer,
   Marker,
 } from 'react-leaflet'
 
-import { LeafletTrackingMarker } from "react-leaflet-tracking-marker";
-import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
+// import { LeafletTrackingMarker } from "react-leaflet-tracking-marker";
+// import ReactLeafletDriftMarker from "react-leaflet-drift-marker";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,11 +36,11 @@ const sharedMarkerProps = {
   tooltipAnchor: [16, -28],
 }
 
-const vehicleMarker = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
-  ...sharedMarkerProps,
-  className: "movingVehicle"
-});
+// const vehicleMarker = new L.Icon({
+//   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
+//   ...sharedMarkerProps,
+//   className: "movingVehicle"
+// });
 
 const startedMarker = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -68,7 +62,7 @@ const center = [-22.8066667, -43.2105167]
 // const Place2 = [-22.8066, -43.2105]
 // const Place3 = [-22.8060, -43.2100]
 
-const blackOptions = { color: 'black' }
+const mainPathLineOptions = { color: 'black' }
 export default class App extends React.Component {
 
   constructor(props) {
@@ -87,44 +81,50 @@ export default class App extends React.Component {
   }
 
   addMarker = (pointLat,pointLng) => {
-      const newPlaceMarker = [pointLat,pointLng]
+      let newPlaceMarker = [pointLat,pointLng]
+      const hasMarkerInList = this.state.placesMarkerList.some((el)=>{
+          return el[0] === newPlaceMarker[0] && el[1] === newPlaceMarker[1]
+      })
+      
+      if(hasMarkerInList){
+        newPlaceMarker=[pointLat,pointLng+0.0005]
+      }
       this.setState((state)=> ({
         placesMarkerList: [...state.placesMarkerList,newPlaceMarker],
       }))
   }
 
-  startPathHandler = () => {
-    const { placesListIndex, placesMarkerList, mainPolyline } = this.state
-    if(!mainPolyline.length) {
-      toast.error("Click on 'Make Path'", {theme: "colored", autoClose: 2500})
-      return 
-    }
-    let index = placesListIndex
-    if(placesListIndex===0){
-      index=1
-    }
-    const target = placesMarkerList[index]
-    const targetLatlng = this.pointToLatlng(target) 
-    this.setState((state)=> ({
-      vehicleMarkerPositionLatLng: targetLatlng,
-      placesListIndex: index+1
-    }))
-  }
+  // startPathHandler = () => {
+  //   const { placesListIndex, placesMarkerList, mainPolyline } = this.state
+  //   if(!mainPolyline.length) {
+  //     toast.error("Click on 'Make Path'", {theme: "colored", autoClose: 2500})
+  //     return 
+  //   }
+  //   let index = placesListIndex
+  //   if(placesListIndex===0){
+  //     index=1
+  //   }
+  //   const target = placesMarkerList[index]
+  //   const targetLatlng = this.pointToLatlng(target) 
+  //   this.setState((state)=> ({
+  //     vehicleMarkerPositionLatLng: targetLatlng,
+  //     placesListIndex: index+1
+  //   }))
+  // }
 
-  continuePathHandler = ()=> {
-    const { placesListIndex, placesMarkerList } = this.state
-    if(placesListIndex >= placesMarkerList.length) return
-    const target = placesMarkerList[placesListIndex]
-    const targetLatlng = this.pointToLatlng(target) 
-      this.setState((state)=> ({
-        vehicleMarkerPositionLatLng: targetLatlng,
-        placesListIndex: placesListIndex+1
-    }))
-  }
+  // continuePathHandler = ()=> {
+  //   const { placesListIndex, placesMarkerList } = this.state
+  //   if(placesListIndex >= placesMarkerList.length) return
+  //   const target = placesMarkerList[placesListIndex]
+  //   const targetLatlng = this.pointToLatlng(target) 
+  //     this.setState((state)=> ({
+  //       vehicleMarkerPositionLatLng: targetLatlng,
+  //       placesListIndex: placesListIndex+1
+  //   }))
+  // }
   
   makePolylinePath = ()=>{
     this.setState((state)=>({
-        placesListIndex:0,
         mainPolyline: [state.startedMarkerPoint, ...state.placesMarkerList]
     }))
   }
@@ -151,8 +151,8 @@ export default class App extends React.Component {
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Polyline pathOptions={blackOptions} positions={this.state.mainPolyline} />
-          <ReactLeafletDriftMarker
+          <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
+          {/* <ReactLeafletDriftMarker
             position={this.state.vehicleMarkerPositionLatLng}
             duration={5000}
             eventHandlers={{
@@ -169,7 +169,7 @@ export default class App extends React.Component {
               Main Car<br />
             </Popup>
             <Tooltip>Car</Tooltip>
-          </ReactLeafletDriftMarker>
+          </ReactLeafletDriftMarker> */}
           {/* <Marker position={Place2}>
             <Popup>
               Getting Fuel <br />
@@ -193,9 +193,9 @@ export default class App extends React.Component {
             )            
           })}
         </MapContainer>
-        <button className="newMarker" onClick={()=> this.addMarker(-22.8056, -43.2105)}>Add Marker</button>
+        <button className="newMarker" onClick={()=> this.addMarker(this.state.placesMarkerList[this.state.placesMarkerList.length-1][0], this.state.placesMarkerList[this.state.placesMarkerList.length-1][1])}>Add Marker</button>
         <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
-        <button className="secondary" onClick={()=> this.startPathHandler()}>Begin Travel</button>
+        {/* <button className="secondary" onClick={()=> this.startPathHandler()}>Begin Travel</button> */}
         <button className="reset" onClick={()=> this.resetMap()}>Reset Map</button>
       </>
 
