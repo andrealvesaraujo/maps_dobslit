@@ -11,7 +11,7 @@
   z-index: 500 !important;
 }
 
-.newMarker {
+/* .newMarker {
   position: absolute;
   z-index: 2;
   top: 5%;
@@ -22,12 +22,12 @@
   border: 1px solid black;
   color: white;
   cursor: pointer;
-}
+} */
 
 .primary {
   position: absolute;
   z-index: 2;
-  top: 15%;
+  top: 5%;
   left: 10%;
   padding:15px;
   background-color:blue;
@@ -36,7 +36,7 @@
   color: white;
   cursor: pointer;
 }
-
+/* 
 .secondary {
   position: absolute;
   z-index: 2;
@@ -48,12 +48,12 @@
   border: 1px solid green;
   color: white;
   cursor: pointer;
-}
+} */
 
 .resetMap {
   position: absolute;
   z-index: 2;
-  top: 35%;
+  top: 15%;
   left: 10%;
   padding:15px;
   background-color:red;
