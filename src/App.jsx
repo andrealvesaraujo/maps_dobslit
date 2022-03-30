@@ -7,9 +7,9 @@ import {
   Tooltip,
   TileLayer,
   Marker,
+  useMap
 } from 'react-leaflet'
-import { useMap } from 'react-leaflet';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 // import { LeafletTrackingMarker } from "react-leaflet-tracking-marker";
@@ -45,12 +45,12 @@ const sharedMarkerProps = {
 // });
 
 const startedMarker = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   ...sharedMarkerProps,
 });
 
 const targetMarker = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   ...sharedMarkerProps,
 });
 
@@ -65,44 +65,45 @@ const center = [-22.8066667, -43.2105167]
 // const Place2 = [-22.8066, -43.2105]
 // const Place3 = [-22.8060, -43.2100]
 
-const SearchStartMarker = () => {
-  const provider = new OpenStreetMapProvider ();
+// const SearchStartMarker = () => {
+//   const provider = new OpenStreetMapProvider ();
 
-  // @ts-ignore
-  const searchControl = new GeoSearchControl({
-    searchLabel: 'Enter new Address Marker',
-    notFoundMessage: 'Sorry, that address could not be found.',
-    marker: {
-      icon: startedMarker
-    },
-    provider: provider,
-    style: 'bar',
-  });
+//   // @ts-ignore
+//   const searchControl = new GeoSearchControl({
+//     searchLabel: 'Starting Address',
+//     notFoundMessage: 'Sorry, that address could not be found.',
+//     marker: {
+//       icon: startedMarker
+//     },
+//     provider: provider,
+//     style: 'bar',
+//   });
 
-  const map = useMap();
-  useEffect(() => {
-    map.addControl(searchControl);
-    return () => map.removeControl(searchControl);
-  }, []);
+//   const map = useMap();
+//   useEffect(() => {
+//     map.addControl(searchControl);
+//     return () => map.removeControl(searchControl);
+//   }, []);
 
-  return null;
-};
+//   return null;
+// };
 
 const SearchNewMarker = ({handlerAddMarker}) => {
   const provider = new OpenStreetMapProvider ();
 
   let valueLatitude
   let valueLongitude
+  let resultAddress
 
   // @ts-ignore
   const searchControl = new GeoSearchControl({
-    searchLabel: 'Enter Start Address Marker',
+    searchLabel: 'New Address',
     notFoundMessage: 'Sorry, that address could not be found.',
     autoClose: true,
-    popupFormat: ({ query, result }) => result.label,
     resultFormat: ({ result }) => {
       valueLatitude = result.raw.lat
       valueLongitude = result.raw.lon
+      resultAddress = result
       return result.label
     }, 
     provider: provider,
@@ -110,11 +111,16 @@ const SearchNewMarker = ({handlerAddMarker}) => {
   });
   
   const map = useMap();
+
   map.on('geosearch/showlocation', (()=> {
     if(valueLatitude && valueLongitude){
+
       handlerAddMarker(valueLatitude, valueLongitude)
+
     }
   }));
+
+
   useEffect(() => {
     map.addControl(searchControl);
     return () => map.removeControl(searchControl);
@@ -129,10 +135,10 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        vehicleMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
-        placesListIndex: 0,
-        startedMarkerPoint: [-22.8066, -43.2114],
-        placesMarkerList: [[-22.8066, -43.2114], [-22.8066, -43.2105], [-22.8060, -43.2100], [-22.8060, -43.2085]],
+        // vehicleMarkerPositionLatLng: {lat:-22.8066, lng: -43.2114},
+        // placesListIndex: 0,
+        // startedMarkerPoint: [],
+        placesMarkerList: [],
         mainPolyline: []
     }
   }
@@ -186,7 +192,7 @@ export default class App extends React.Component {
   
   makePolylinePath = ()=>{
     this.setState((state)=>({
-        mainPolyline: [state.startedMarkerPoint, ...state.placesMarkerList]
+        mainPolyline: [...state.placesMarkerList]
     }))
   }
 
@@ -194,31 +200,25 @@ export default class App extends React.Component {
     document.location.reload(true);
   }
 
-  pointToLatlng = (point) => {
-      return {
-        lat: point[0], lng: point[1]
-      }
-  }
+  // pointToLatlng = (point) => {
+  //     return {
+  //       lat: point[0], lng: point[1]
+  //     }
+  // }
 
-  latLangToPoint = (latLang) => {
-      return [latLang.lat, latLang.lng]
-  }
-
-  handlerSaveForm = (e) => {
-    e.preventDefault()
-    console.log("Validou e salvou")
-    console.log(e)
-  }
+  // latLangToPoint = (latLang) => {
+  //     return [latLang.lat, latLang.lng]
+  // }
 
   render(){
     return (
       <>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
         <MapContainer center={center} zoom={18}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <SearchStartMarker />
+          {/* <SearchStartMarker /> */}
           <SearchNewMarker handlerAddMarker={this.addMarker}/>
           <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
           {/* <ReactLeafletDriftMarker
