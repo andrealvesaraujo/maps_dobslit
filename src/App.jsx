@@ -89,21 +89,22 @@ const center = [-22.8066667, -43.2105167]
 // };
 
 const SearchNewMarker = ({handlerAddMarker}) => {
-  const provider = new OpenStreetMapProvider ();
-
-  let valueLatitude
-  let valueLongitude
-  let resultAddress
+  const provider = new OpenStreetMapProvider (
+    {
+      params: {
+        addressdetails: 1,
+      },
+    }
+  );
 
   // @ts-ignore
   const searchControl = new GeoSearchControl({
     searchLabel: 'New Address',
-    notFoundMessage: 'Sorry, that address could not be found.',
+    autoComplete: true,
     autoClose: true,
+    keepResult: false,
+    notFoundMessage: 'Sorry, that address could not be found.',
     resultFormat: ({ result }) => {
-      valueLatitude = result.raw.lat
-      valueLongitude = result.raw.lon
-      resultAddress = result
       return result.label
     }, 
     provider: provider,
@@ -112,11 +113,12 @@ const SearchNewMarker = ({handlerAddMarker}) => {
   
   const map = useMap();
 
-  map.on('geosearch/showlocation', (()=> {
+  map.on('geosearch/showlocation', ((searchResult)=> {
+    const valueLatitude = searchResult.location.raw.lat
+    const valueLongitude = searchResult.location.raw.lon
+    const address = searchResult.location.raw.address
     if(valueLatitude && valueLongitude){
-
-      handlerAddMarker(valueLatitude, valueLongitude)
-
+      handlerAddMarker(valueLatitude, valueLongitude, address)
     }
   }));
 
@@ -130,6 +132,7 @@ const SearchNewMarker = ({handlerAddMarker}) => {
 };
 
 const mainPathLineOptions = { color: 'black' }
+let valor = 1
 export default class App extends React.Component {
 
   constructor(props) {
@@ -142,22 +145,27 @@ export default class App extends React.Component {
         mainPolyline: []
     }
   }
-
   componentDidMount() {
-      console.log(this.state);
+      // console.log(this.state.placesMarkerList);
   }
 
-  addMarker = (pointLat,pointLng) => {
+  addMarker = (pointLat,pointLng, address) => {
       let newPlaceMarker = [pointLat,pointLng]
-      const hasMarkerInList = this.state.placesMarkerList.some((el)=>{
-          return el[0] === newPlaceMarker[0] && el[1] === newPlaceMarker[1]
+      const hasMarkerInList = this.state.placesMarkerList.some((marker)=>{
+          return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
       })
       
       if(hasMarkerInList){
         return
       }
       this.setState((state)=> ({
-        placesMarkerList: [...state.placesMarkerList,newPlaceMarker],
+        placesMarkerList: [
+          ...state.placesMarkerList,
+          {
+            position: newPlaceMarker,
+            address
+          }
+        ],
       }))
   }
 
@@ -192,7 +200,7 @@ export default class App extends React.Component {
   
   makePolylinePath = ()=>{
     this.setState((state)=>({
-        mainPolyline: [...state.placesMarkerList]
+        mainPolyline: [...state.placesMarkerList.map(marker=> marker.position)]
     }))
   }
 
@@ -216,7 +224,7 @@ export default class App extends React.Component {
         {/* <ToastContainer /> */}
         <MapContainer center={center} zoom={18}>
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {/* <SearchStartMarker /> */}
           <SearchNewMarker handlerAddMarker={this.addMarker}/>
@@ -251,11 +259,11 @@ export default class App extends React.Component {
             </Popup>
             <Tooltip>Main Stop</Tooltip>
           </Marker> */}
-          {this.state.placesMarkerList.map((markerPosition, index, arr) =>{
+          {this.state.placesMarkerList.map((marker, index, arr) =>{
             return (
-              <Marker key={`key_${index}`} position={markerPosition} icon={index === 0 ? startedMarker : (index === arr.length-1 ? targetMarker : new L.Icon.Default())}>
+              <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length-1 ? targetMarker : new L.Icon.Default())}>
                 <Popup>
-                  Place Marker Popup
+                {marker.address.country} - {marker.address.city} - {marker.address.road} - {marker.address.house_number}
                 </Popup>
                 <Tooltip>Tooltip of Marker</Tooltip>
               </Marker>
