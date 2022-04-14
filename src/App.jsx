@@ -9,7 +9,7 @@ import {
   Marker,
   useMap,
 } from 'react-leaflet'
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import MyApiService from './services/MyApiService';
 
@@ -126,22 +126,32 @@ export default class App extends React.Component {
   
   makePolylinePath = async ()=>{
     const {placesMarkerList} = this.state
-    if(placesMarkerList && placesMarkerList.length >= 2){
+    if(placesMarkerList && placesMarkerList.length >= -1){
       const positionsPlacesMarkerList = [...placesMarkerList.map(marker=> marker.position)]
 
       const markerPathResponse = await MyApiService.updateMarkerPath(positionsPlacesMarkerList)
       
-      if(markerPathResponse.status === 200) {
+      if(markerPathResponse.status !== 200) {
         const markerPath = await MyApiService.getMarkerPath()
         this.setState(()=>({
             mainPolyline: markerPath
         }))
       }else{
-        console.log('Não foi possivel adicionar os endereços')
+        toast.error("Não foi possivel adicionar os endereços", 
+          {
+            theme: "colored", 
+            autoClose: 2500
+          }
+        )
       }
       return
     }
-    console.log('Erro: Precisa escolher pelo menos 2 endereços');  
+    toast.error("Erro: Precisa escolher pelo menos 2 endereços", 
+      {
+        theme: "colored", 
+        autoClose: 2500
+      }
+    )
   }
 
   resetMap = ()=> {
@@ -151,7 +161,7 @@ export default class App extends React.Component {
   render(){
     return (
       <>
-        {/* <ToastContainer /> */}
+        <ToastContainer />
         <MapContainer center={center} zoom={18}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
