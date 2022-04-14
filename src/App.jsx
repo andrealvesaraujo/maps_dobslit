@@ -11,6 +11,7 @@ import {
 } from 'react-leaflet'
 // import { ToastContainer, toast } from 'react-toastify';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import MyApiService from './services/MyApiService';
 
 import 'leaflet-geosearch/dist/geosearch.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -72,8 +73,8 @@ const SearchNewMarker = ({handlerAddMarker}) => {
   const map = useMap();
 
   map.on('geosearch/showlocation', ((searchResult)=> {
-    const valueLatitude = searchResult.location.raw.lat
-    const valueLongitude = searchResult.location.raw.lon
+    const valueLatitude = Number(searchResult.location.raw.lat)
+    const valueLongitude = Number(searchResult.location.raw.lon)
     const address = searchResult.location.raw.address
     if(valueLatitude && valueLongitude){
       handlerAddMarker(valueLatitude, valueLongitude, address)
@@ -100,8 +101,8 @@ export default class App extends React.Component {
     }
   }
   componentDidMount() {
-      // console.log(this.state.placesMarkerList);
   }
+  
 
   addMarker = (pointLat,pointLng, address) => {
       let newPlaceMarker = [pointLat,pointLng]
@@ -123,10 +124,24 @@ export default class App extends React.Component {
       }))
   }
   
-  makePolylinePath = ()=>{
-    this.setState((state)=>({
-        mainPolyline: [...state.placesMarkerList.map(marker=> marker.position)]
-    }))
+  makePolylinePath = async ()=>{
+    const {placesMarkerList} = this.state
+    if(placesMarkerList && placesMarkerList.length >= 2){
+      const positionsPlacesMarkerList = [...placesMarkerList.map(marker=> marker.position)]
+
+      const markerPathResponse = await MyApiService.updateMarkerPath(positionsPlacesMarkerList)
+      
+      if(markerPathResponse.status === 200) {
+        const markerPath = await MyApiService.getMarkerPath()
+        this.setState(()=>({
+            mainPolyline: markerPath
+        }))
+      }else{
+        console.log('Não foi possivel adicionar os endereços')
+      }
+      return
+    }
+    console.log('Erro: Precisa escolher pelo menos 2 endereços');  
   }
 
   resetMap = ()=> {
