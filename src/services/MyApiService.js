@@ -16,7 +16,9 @@ export default class MyApiService {
             {
                 method: 'PUT', 
                 body: JSON.stringify(positionsList),
-                headers: {'Content-Type': 'application/json'}
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             }
         )
         return result

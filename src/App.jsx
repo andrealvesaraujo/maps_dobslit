@@ -45,8 +45,6 @@ const targetMarker = new L.Icon({
   ...sharedMarkerProps,
 });
 
-const center = [-22.8066667, -43.2105167]
-
 const SearchNewMarker = ({handlerAddMarker}) => {
   const provider = new OpenStreetMapProvider (
     {
@@ -90,19 +88,38 @@ const SearchNewMarker = ({handlerAddMarker}) => {
   return null;
 };
 
+const center = [-22.8066667, -43.2105167]
 const mainPathLineOptions = { color: 'black' }
+
 export default class App extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
         placesMarkerList: [],
-        mainPolyline: []
+        mainPolyline: [],
+        isLoading: true,
+        centerOfMap: []
     }
   }
-  componentDidMount() {
-  }
   
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition((position) => {
+        this.setState((state) => ({
+          ...state,
+          centerOfMap: [position.coords.latitude, position.coords.longitude]
+        }), () => {
+          this.setState((state) => ({
+            ...state,
+            isLoading: false
+          }));
+        });
+    }, (error)=>{
+      console.error("Error Code = " + error.code + " - " + error.message);
+    }, {
+      timeout:10000
+    });    
+  }  
 
   addMarker = (pointLat,pointLng, address) => {
       let newPlaceMarker = [pointLat,pointLng]
@@ -126,12 +143,12 @@ export default class App extends React.Component {
   
   makePolylinePath = async ()=>{
     const {placesMarkerList} = this.state
-    if(placesMarkerList && placesMarkerList.length >= -1){
+    if(placesMarkerList && placesMarkerList.length >= 2){
       const positionsPlacesMarkerList = [...placesMarkerList.map(marker=> marker.position)]
 
       const markerPathResponse = await MyApiService.updateMarkerPath(positionsPlacesMarkerList)
       
-      if(markerPathResponse.status !== 200) {
+      if(markerPathResponse.status === 200) {
         const markerPath = await MyApiService.getMarkerPath()
         this.setState(()=>({
             mainPolyline: markerPath
@@ -161,28 +178,38 @@ export default class App extends React.Component {
   render(){
     return (
       <>
-        <ToastContainer />
-        <MapContainer center={center} zoom={18}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <SearchNewMarker handlerAddMarker={this.addMarker}/>
-          <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
-          {this.state.placesMarkerList.map((marker, index, arr) =>{
-            return (
-              <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length-1 ? targetMarker : new L.Icon.Default())}>
-                <Popup>
-                {marker.address.country} - {marker.address.city} - {marker.address.road} - {marker.address.house_number}
-                </Popup>
-                <Tooltip>Tooltip of Marker</Tooltip>
-              </Marker>
-            )            
-          })}
-        </MapContainer>
-        <button className="primary" onClick={()=> this.makePolylinePath()}>Make Path</button>
-        <button className="resetMap" onClick={()=> this.resetMap()}>Reset Map</button>
+        { this.state.isLoading 
+          ? 
+          (
+            <p>Está carregando</p>
+          )
+          : 
+          (
+            <>
+              <ToastContainer />
+              <MapContainer center={this.state.centerOfMap} zoom={18}>
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <SearchNewMarker handlerAddMarker={this.addMarker} />
+                <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
+                {this.state.placesMarkerList.map((marker, index, arr) => {
+                  return (
+                    <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : new L.Icon.Default())}>
+                      <Popup>
+                        {marker.address.country} - {marker.address.city} - {marker.address.road} - {marker.address.house_number}
+                      </Popup>
+                      <Tooltip>Tooltip of Marker</Tooltip>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+              <button className="primary" onClick={() => this.makePolylinePath()}>Make Path</button>
+              <button className="resetMap" onClick={() => this.resetMap()}>Reset Map</button>
+            </>
+          )
+        }
       </>
-
     );
   }
 }
