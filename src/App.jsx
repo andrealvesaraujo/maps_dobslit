@@ -57,6 +57,7 @@ const SearchNewMarker = ({handlerAddMarker}) => {
   // @ts-ignore
   const searchControl = new GeoSearchControl({
     searchLabel: 'New Address',
+    maxSuggestions: 3,
     autoComplete: true,
     autoClose: true,
     keepResult: false,
@@ -67,6 +68,24 @@ const SearchNewMarker = ({handlerAddMarker}) => {
     provider: provider,
     style: 'bar',
   });
+
+  searchControl.onSubmit = (query) => {
+    if(query.data){
+      return searchControl.showResult(query.data)
+    }else{
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query.query}&addressdetails=1`)
+        .then(res => res.json())
+        .then(json => {
+          return provider.parse({data: json[0]})
+        })
+        .then((results) => {
+          if (results && results.length > 0) {
+            searchControl.showResult(results[0], query);
+          }
+      });
+    }
+    
+  };
   
   const map = useMap();
 
@@ -78,7 +97,6 @@ const SearchNewMarker = ({handlerAddMarker}) => {
       handlerAddMarker(valueLatitude, valueLongitude, address)
     }
   }));
-
 
   useEffect(() => {
     map.addControl(searchControl);
@@ -124,7 +142,7 @@ export default class App extends React.Component {
   addMarker = (pointLat,pointLng, address) => {
       let newPlaceMarker = [pointLat,pointLng]
       const hasMarkerInList = this.state.placesMarkerList.some((marker)=>{
-          return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
+        return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
       })
       
       if(hasMarkerInList){
@@ -197,7 +215,11 @@ export default class App extends React.Component {
                   return (
                     <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : new L.Icon.Default())}>
                       <Popup>
-                        {marker.address.country} - {marker.address.city} - {marker.address.road} - {marker.address.house_number}
+                        {marker.address.country ? `${marker.address.country} - `  : ' '}
+                        {marker.address.city ? `${marker.address.city} - ` : ' '}
+                        {marker.address.road ? `${marker.address.road} -  ` : ' '}
+                        {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
+                        {marker.address.postcode? `${marker.address.postcode}` : ' '}
                       </Popup>
                       <Tooltip>Tooltip of Marker</Tooltip>
                     </Marker>
