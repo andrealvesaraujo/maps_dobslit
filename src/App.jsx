@@ -18,6 +18,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
+import Spinner from './components/Spinner'
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -199,7 +201,7 @@ export default class App extends React.Component {
         { this.state.isLoading 
           ? 
           (
-            <p>Está carregando</p>
+            <Spinner />
           )
           : 
           (
