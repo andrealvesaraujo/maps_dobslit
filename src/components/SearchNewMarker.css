@@ -1,0 +1,12 @@
+
+.leaflet-control-geosearch .results > *:empty {
+    display: none;
+  }
+  
+.leaflet-control-geosearch a.reset {
+    font-size: 30px;
+}
+
+.leaflet-geosearch-bar {
+    margin-top: 50px;
+}

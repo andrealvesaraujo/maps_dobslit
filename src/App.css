@@ -7,10 +7,6 @@
   z-index: 1;
 }
 
-.leaflet-control-geosearch .results > *:empty {
-  display: none;
-}
-
 .primary {
   position: absolute;
   z-index: 2;
