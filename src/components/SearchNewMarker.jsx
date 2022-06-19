@@ -30,32 +30,25 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
   
     searchControl.onSubmit = (query) => {
       if(query.data){
+        handlerAddMarker(query.data.raw.lat, query.data.raw.lon, query.data.raw.address)
         return searchControl.showResult(query.data)
       }else{
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query.query}&addressdetails=1`)
           .then(res => res.json())
           .then(json => {
-            return provider.parse({data: json[0]})
+            return provider.parse({data: json[0] || []})
           })
           .then((results) => {
             if (results && results.length > 0) {
+              handlerAddMarker(results[0].raw.lat, results[0].raw.lon, results[0].raw.address)
               searchControl.showResult(results[0], query);
             }
         });
       }
       
     };
-    
+
     const map = useMap();
-  
-    map.on('geosearch/showlocation', ((searchResult)=> {
-      const valueLatitude = Number(searchResult.location.raw.lat)
-      const valueLongitude = Number(searchResult.location.raw.lon)
-      const address = searchResult.location.raw.address
-      if(valueLatitude && valueLongitude){
-        handlerAddMarker(valueLatitude, valueLongitude, address)
-      }
-    }));
   
     useEffect(() => {
       map.addControl(searchControl);
