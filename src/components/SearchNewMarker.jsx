@@ -15,12 +15,12 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
   
     // @ts-ignore
     const searchControl = new GeoSearchControl({
-      searchLabel: 'New Address',
+      searchLabel: 'Digite o novo endereço',
       maxSuggestions: 3,
       autoComplete: true,
       autoClose: true,
       keepResult: false,
-      notFoundMessage: 'Sorry, that address could not be found.',
+      notFoundMessage: 'Desculpe, esse endereço não foi encontrado',
       resultFormat: ({ result }) => {
         return result.label
       }, 

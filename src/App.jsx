@@ -126,19 +126,23 @@ export default class App extends React.Component {
                   return (
                     <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
                       <Popup>
-                        {marker.address.country ? `${marker.address.country} - `  : ' '}
-                        {marker.address.city ? `${marker.address.city} - ` : ' '}
-                        {marker.address.road ? `${marker.address.road} -  ` : ' '}
-                        {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
-                        {marker.address.postcode? `${marker.address.postcode}` : ' '}
+                        <div className='result-popup-container'>
+                          {marker.address.country ? `${marker.address.country} - `  : ' '}
+                          {marker.address.city ? `${marker.address.city} - ` : ' '}
+                          {marker.address.road ? `${marker.address.road} -  ` : ' '}
+                          {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
+                          {marker.address.postcode? `${marker.address.postcode}` : ' '}
+                          <button className='btn-edit' onClick={() => this.handleEdit()}>Editar</button>
+                          <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
+                        </div>                       
                       </Popup>
                       <Tooltip>Ponto {index+1}</Tooltip>
                     </Marker>
                   );
                 })}
               </MapContainer>
-              <button className="primary" onClick={() => this.makePolylinePath()}>Make Path</button>
-              <button className="clearMap" onClick={() => this.clearMap()}>Clear Map</button>
+              <button className="primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
+              <button className="clearMap" onClick={() => this.clearMap()}>Limpar Mapa</button>
             </>
           )
         }
