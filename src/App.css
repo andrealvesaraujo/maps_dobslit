@@ -20,7 +20,7 @@
   cursor: pointer;
 }
 
-.resetMap {
+.clearMap {
   position: absolute;
   z-index: 2;
   top: 15%;

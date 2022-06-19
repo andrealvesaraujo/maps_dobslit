@@ -15,8 +15,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
-const center = [-22.8066667, -43.2105167]
-const mainPathLineOptions = { color: 'black' }
 export default class App extends React.Component {
 
   constructor(props) {
@@ -25,7 +23,8 @@ export default class App extends React.Component {
         placesMarkerList: [],
         mainPolyline: [],
         isLoading: true,
-        centerOfMap: []
+        centerOfMap: [],
+        mainPathOptions: { color: 'black' }
     }
   }
   
@@ -47,13 +46,17 @@ export default class App extends React.Component {
     });    
   }  
 
-  addMarker = (pointLat,pointLng, address) => {
-      let newPlaceMarker = [pointLat,pointLng]
+  addMarker = (pointLat, pointLng, address) => {
+      let newPlaceMarker = [pointLat, pointLng]
       const hasMarkerInList = this.state.placesMarkerList.some((marker)=>{
         return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
       })
       
       if(hasMarkerInList){
+        toast.error("Esse endereço já foi adicionado", {
+          theme: "colored", 
+          autoClose: 2500
+        })
         return
       }
       this.setState((state)=> ({
@@ -97,7 +100,7 @@ export default class App extends React.Component {
     )
   }
 
-  resetMap = ()=> {
+  clearMap = ()=> {
     document.location.reload(true);
   }
 
@@ -118,7 +121,7 @@ export default class App extends React.Component {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <SearchNewMarker handlerAddMarker={this.addMarker} />
-                <Polyline pathOptions={mainPathLineOptions} positions={this.state.mainPolyline} />
+                <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPolyline} />
                 {this.state.placesMarkerList.map((marker, index, arr) => {
                   return (
                     <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
@@ -129,13 +132,13 @@ export default class App extends React.Component {
                         {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
                         {marker.address.postcode? `${marker.address.postcode}` : ' '}
                       </Popup>
-                      <Tooltip>Tooltip of Marker</Tooltip>
+                      <Tooltip>Ponto {index+1}</Tooltip>
                     </Marker>
                   );
                 })}
               </MapContainer>
               <button className="primary" onClick={() => this.makePolylinePath()}>Make Path</button>
-              <button className="resetMap" onClick={() => this.resetMap()}>Reset Map</button>
+              <button className="clearMap" onClick={() => this.clearMap()}>Clear Map</button>
             </>
           )
         }
