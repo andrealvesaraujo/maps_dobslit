@@ -100,6 +100,24 @@ export default class App extends React.Component {
     )
   }
 
+  handleEdit = ()=>{
+      console.log('Editou')
+  }
+
+  handleDelete = (markerIndex)=>{
+      const filteredPlacesMarkerList = this.state.placesMarkerList.filter((marker, idx)=> idx !== markerIndex )
+      this.setState((state)=>({
+        ...state,
+        placesMarkerList: filteredPlacesMarkerList,
+        mainPolyline: []
+      }), ()=>{
+          toast.success('Endereço apagado com sucesso', {
+            theme: "colored", 
+            autoClose: 2500
+          })
+      })
+  }
+
   clearMap = ()=> {
     document.location.reload(true);
   }
