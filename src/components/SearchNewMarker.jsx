@@ -8,6 +8,7 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
     const provider = new OpenStreetMapProvider (
       {
         params: {
+          q: 'KOE',
           addressdetails: 1,
         },
       }
@@ -27,7 +28,7 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
       provider: provider,
       style: 'bar',
     });
-  
+      
     searchControl.onSubmit = (query) => {
       if(query.data){
         handlerAddMarker(query.data.raw.lat, query.data.raw.lon, query.data.raw.address)

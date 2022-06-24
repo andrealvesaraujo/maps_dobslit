@@ -24,7 +24,9 @@ export default class App extends React.Component {
         mainPolyline: [],
         isLoading: true,
         centerOfMap: [],
-        mainPathOptions: { color: 'black' }
+        mainPathOptions: { color: 'black' },
+        isEditing: false,
+        editingMarker: 0
     }
   }
   
@@ -59,14 +61,36 @@ export default class App extends React.Component {
         })
         return
       }
+      if(this.state.isEditing){
+        const editedPlacesMarkerList = [...this.state.placesMarkerList].map((marker) => {
+          if(marker === this.state.editingMarker){
+              const editedMarker = {
+                  ...marker,
+                  position: newPlaceMarker,
+                  address,
+              }
+              return editedMarker
+          }
+          return marker
+        })
+        this.setState((state)=> ({
+          ...state,
+          placesMarkerList: editedPlacesMarkerList,
+          mainPolyline: []
+        }))
+        return
+      }
+
       this.setState((state)=> ({
+        ...state,
         placesMarkerList: [
           ...state.placesMarkerList,
           {
             position: newPlaceMarker,
             address
-          }
+          },
         ],
+        mainPolyline: []
       }))
   }
   
@@ -100,8 +124,15 @@ export default class App extends React.Component {
     )
   }
 
-  handleEdit = ()=>{
-      console.log('Editou')
+  handleEdit = (marker)=>{
+      const address = marker.address;
+      document.querySelector('input').value = `${address.country}, ${address.city}, ${address.road}, ${address.house_number}`
+      document.querySelector('input').focus()
+      this.setState((state) => ({
+        ...state,
+        isEditing: true,
+        editingMarker: marker
+      }))
   }
 
   handleDelete = (markerIndex)=>{
@@ -145,12 +176,14 @@ export default class App extends React.Component {
                     <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
                       <Popup>
                         <div className='result-popup-container'>
-                          {marker.address.country ? `${marker.address.country} - `  : ' '}
-                          {marker.address.city ? `${marker.address.city} - ` : ' '}
-                          {marker.address.road ? `${marker.address.road} -  ` : ' '}
-                          {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
-                          {marker.address.postcode? `${marker.address.postcode}` : ' '}
-                          <button className='btn-edit' onClick={() => this.handleEdit()}>Editar</button>
+                          <div className='result-popup-adress-text'>
+                            {marker.address.country ? `${marker.address.country} - `  : ' '}
+                            {marker.address.city ? `${marker.address.city} - ` : ' '}
+                            {marker.address.road ? `${marker.address.road} -  ` : ' '}
+                            {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
+                            {marker.address.postcode? `${marker.address.postcode}` : ' '}
+                          </div>
+                          <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
                           <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
                         </div>                       
                       </Popup>
