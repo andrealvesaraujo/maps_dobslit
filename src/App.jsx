@@ -1,8 +1,9 @@
 import React from 'react';
+import L from 'leaflet';
 import { 
   MapContainer, Polyline,
   Popup, Tooltip, TileLayer, 
-  Marker
+  Marker, useMap
 } from 'react-leaflet'
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -10,10 +11,18 @@ import MyApiService from './services/MyApiService';
 import Spinner from './components/Spinner'
 import {SearchNewMarker} from './components/SearchNewMarker'
 import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
+import 'leaflet-arrowheads';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
+
+function ArrowPolyLine({polyLine, coords}) {
+  const map = useMap()
+  if (!polyLine) return null
+  coords.length > 0 ? polyLine.arrowheads({frequency: 'endonly', size: '20px'}).addTo(map) : polyLine.arrowheads().remove()
+  return null
+}
 
 export default class App extends React.Component {
 
@@ -21,7 +30,8 @@ export default class App extends React.Component {
     super(props)
     this.state = {
         placesMarkerList: [],
-        mainPolyline: [],
+        mainPathCoordinates: [],
+        polyline: null,
         isLoading: true,
         centerOfMap: [],
         mainPathOptions: { color: 'black' },
@@ -61,6 +71,7 @@ export default class App extends React.Component {
         })
         return
       }
+
       if(this.state.isEditing){
         const editedPlacesMarkerList = [...this.state.placesMarkerList].map((marker) => {
           if(marker === this.state.editingMarker){
@@ -76,7 +87,7 @@ export default class App extends React.Component {
         this.setState((state)=> ({
           ...state,
           placesMarkerList: editedPlacesMarkerList,
-          mainPolyline: []
+          mainPathCoordinates: []
         }))
         return
       }
@@ -90,7 +101,7 @@ export default class App extends React.Component {
             address
           },
         ],
-        mainPolyline: []
+        mainPathCoordinates: []
       }))
   }
   
@@ -104,7 +115,8 @@ export default class App extends React.Component {
       if(markerPathResponse.status === 200) {
         const markerPath = await MyApiService.getMarkerPath()
         this.setState(()=>({
-            mainPolyline: markerPath
+            mainPathCoordinates: markerPath,
+            polyline: L.polyline(markerPath, {color: 'black'})
         }))
       }else{
         toast.error("Não foi possivel adicionar os endereços", 
@@ -140,7 +152,7 @@ export default class App extends React.Component {
       this.setState((state)=>({
         ...state,
         placesMarkerList: filteredPlacesMarkerList,
-        mainPolyline: []
+        mainPathCoordinates: []
       }), ()=>{
           toast.success('Endereço apagado com sucesso', {
             theme: "colored", 
@@ -170,7 +182,8 @@ export default class App extends React.Component {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <SearchNewMarker handlerAddMarker={this.addMarker} />
-                <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPolyline} />
+                {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
+                <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
                 {this.state.placesMarkerList.map((marker, index, arr) => {
                   return (
                     <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>

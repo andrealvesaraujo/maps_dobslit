@@ -8,7 +8,6 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
     const provider = new OpenStreetMapProvider (
       {
         params: {
-          q: 'KOE',
           addressdetails: 1,
         },
       }
@@ -17,7 +16,7 @@ export const SearchNewMarker = ({handlerAddMarker}) => {
     // @ts-ignore
     const searchControl = new GeoSearchControl({
       searchLabel: 'Digite o novo endereço',
-      maxSuggestions: 3,
+      maxSuggestions: 1,
       autoComplete: true,
       autoClose: true,
       keepResult: false,
