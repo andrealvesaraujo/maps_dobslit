@@ -17,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
+import { MdMenu, MdOutlineClose } from 'react-icons/md';
+
 function ArrowPolyLine({polyLine, coords}) {
   const map = useMap()
   if (!polyLine) return null
@@ -36,7 +38,8 @@ export default class App extends React.Component {
         centerOfMap: [],
         mainPathOptions: { color: 'black' },
         isEditing: false,
-        editingMarker: 0
+        editingMarker: 0,
+        open: false
     }
   }
   
@@ -57,6 +60,13 @@ export default class App extends React.Component {
       timeout:10000
     });    
   }  
+
+  toogleMenu = () => {
+    this.setState((state)=>({
+      ...state,
+      open: !state.open
+    }))
+  }
 
   addMarker = (pointLat, pointLng, address) => {
       let newPlaceMarker = [pointLat, pointLng]
@@ -176,37 +186,42 @@ export default class App extends React.Component {
           : 
           (
             <>
-              <ToastContainer />
-              <MapContainer center={this.state.centerOfMap} zoom={18}>
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <SearchNewMarker handlerAddMarker={this.addMarker} />
-                {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
-                <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
-                {this.state.placesMarkerList.map((marker, index, arr) => {
-                  return (
-                    <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
-                      <Popup>
-                        <div className='result-popup-container'>
-                          <div className='result-popup-adress-text'>
-                            {marker.address.country ? `${marker.address.country} - `  : ' '}
-                            {marker.address.city ? `${marker.address.city} - ` : ' '}
-                            {marker.address.road ? `${marker.address.road} -  ` : ' '}
-                            {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
-                            {marker.address.postcode? `${marker.address.postcode}` : ' '}
-                          </div>
-                          <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
-                          <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
-                        </div>                       
-                      </Popup>
-                      <Tooltip>Ponto {index+1}</Tooltip>
-                    </Marker>
-                  );
-                })}
-              </MapContainer>
-              <button className="primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
-              <button className="clearMap" onClick={() => this.clearMap()}>Limpar Mapa</button>
+              <div className='main'>
+                <ToastContainer />
+                <div className={`container-sidebar-menu ${this.state.open ? 'show' : '' }`}>
+                  <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
+                    {this.state.open ? (<MdOutlineClose />) : (<MdMenu />)}
+                  </div>
+                </div>
+                <MapContainer center={this.state.centerOfMap} zoom={18}>
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <SearchNewMarker handlerAddMarker={this.addMarker} />
+                  {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
+                  <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
+                  {this.state.placesMarkerList.map((marker, index, arr) => {
+                    return (
+                      <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
+                        <Popup>
+                          <div className='result-popup-container'>
+                            <div className='result-popup-adress-text'>
+                              {marker.address.country ? `${marker.address.country} - `  : ' '}
+                              {marker.address.city ? `${marker.address.city} - ` : ' '}
+                              {marker.address.road ? `${marker.address.road} -  ` : ' '}
+                              {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
+                              {marker.address.postcode? `${marker.address.postcode}` : ' '}
+                            </div>
+                            <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
+                            <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
+                          </div>                       
+                        </Popup>
+                        <Tooltip>Ponto {index+1}</Tooltip>
+                      </Marker>
+                    );
+                  })}
+                </MapContainer>
+              </div>
             </>
           )
         }

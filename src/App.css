@@ -1,5 +1,33 @@
 @import '~leaflet/dist/leaflet.css';
 
+.main {
+  display: flex;
+}
+
+.container-sidebar-menu {
+  width: 3%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-height: 100vh;
+  transition: width 1s;
+  padding: 10px;
+}
+
+.container-sidebar-menu.show {
+  width: 25%;
+}
+
+.hamburger-icon {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  font-size: 35px;
+  cursor: pointer;
+}
 
 .leaflet-container {
   width: 100%;
