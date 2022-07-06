@@ -203,9 +203,9 @@ export default class App extends React.Component {
                     <input type='text' placeholder='Digite o endereço' />
                   </div>
                   <div className='container-buttons'>
-                    <button className="info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
-                    <button className="primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
-                    <button className="error" onClick={() => this.clearMap()}>Limpar Mapa</button>
+                    <button className="btn-info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
+                    <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
+                    <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
                   </div>
                 </div>
                 <MapContainer center={this.state.centerOfMap} zoom={18}>

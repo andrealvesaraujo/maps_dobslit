@@ -61,6 +61,52 @@
 
 .container-buttons {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
+.btn-primary {
+  padding:15px;
+  background-color:#28a745;
+  border-radius: 30px;
+  border: 1px solid #28a745;
+  color: white;
+  cursor: pointer;
+  margin: 15px 0;
+  transition:all 1s;
+}
+
+.btn-primary:hover {
+  opacity: 0.5;
+}
+
+.btn-error {
+  padding:15px;
+  background-color:#dc3545;
+  border-radius: 30px;
+  border: 1px solid #dc3545;
+  color: white;
+  cursor: pointer;
+  transition:all 1s;
+}
+
+.btn-error:hover {
+  opacity: 0.5;
+}
+
+.btn-info {
+  padding:15px;
+  background-color:#3580dc;
+  border-radius: 30px;
+  border: 1px solid #3580dc;
+  color: white;
+  cursor: pointer;
+  transition:all 1s;
+}
+
+.btn-info:hover {
+  opacity: 0.5;
 }
 
 
@@ -80,45 +126,6 @@
   font-size: 16px;
   margin-bottom: 15px;
 } 
-
-.primary {
-  /* position: absolute;
-  z-index: 2;
-  top: 5%;
-  left: 10%; */
-  padding:15px;
-  background-color:#28a745;
-  border-radius: 30px;
-  border: 1px solid #28a745;
-  color: white;
-  cursor: pointer;
-}
-
-.error {
-  /* position: absolute;
-  z-index: 2;
-  top: 15%;
-  left: 10%; */
-  padding:15px;
-  background-color:#dc3545;
-  border-radius: 30px;
-  border: 1px solid #dc3545;
-  color: white;
-  cursor: pointer;
-}
-
-.info {
-  /* position: absolute;
-  z-index: 2;
-  top: 15%;
-  left: 10%; */
-  padding:15px;
-  background-color:#3580dc;
-  border-radius: 30px;
-  border: 1px solid #3580dc;
-  color: white;
-  cursor: pointer;
-}
 
 .btn-edit {
   font-size: 14px;
