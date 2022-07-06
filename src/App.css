@@ -4,7 +4,7 @@
   display: flex;
 }
 
-.container-sidebar-menu {
+.container-sidebar-menu  {
   width: 3%;
   background-color: #ffffff;
   display: flex;
@@ -12,13 +12,23 @@
   align-items: center;
   gap: 10px;
   max-height: 100vh;
-  transition: width 1s;
+  transition: all 1s;
   padding: 10px;
 }
 
 .container-sidebar-menu.show {
   width: 25%;
 }
+
+.container-sidebar-menu .container-adresses, .container-sidebar-menu .container-buttons  {
+  transition: opacity 0.5s;
+  opacity: 0;
+} 
+
+.container-sidebar-menu.show .container-adresses, .container-sidebar-menu.show .container-buttons  {
+  opacity: 1;
+} 
+
 
 .hamburger-icon {
   width: 100%;
@@ -28,6 +38,18 @@
   font-size: 35px;
   cursor: pointer;
 }
+
+.container-adresses {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 85%;
+}
+
+.container-buttons {
+  display: flex;
+}
+
 
 .leaflet-container {
   width: 100%;
@@ -47,10 +69,10 @@
 } 
 
 .primary {
-  position: absolute;
+  /* position: absolute;
   z-index: 2;
   top: 5%;
-  left: 10%;
+  left: 10%; */
   padding:15px;
   background-color:#28a745;
   border-radius: 30px;
@@ -59,15 +81,28 @@
   cursor: pointer;
 }
 
-.clearMap {
-  position: absolute;
+.error {
+  /* position: absolute;
   z-index: 2;
   top: 15%;
-  left: 10%;
+  left: 10%; */
   padding:15px;
   background-color:#dc3545;
   border-radius: 30px;
   border: 1px solid #dc3545;
+  color: white;
+  cursor: pointer;
+}
+
+.info {
+  /* position: absolute;
+  z-index: 2;
+  top: 15%;
+  left: 10%; */
+  padding:15px;
+  background-color:#3580dc;
+  border-radius: 30px;
+  border: 1px solid #3580dc;
   color: white;
   cursor: pointer;
 }

@@ -172,7 +172,12 @@ export default class App extends React.Component {
   }
 
   clearMap = ()=> {
-    document.location.reload(true);
+    // document.location.reload(true);
+    this.setState((state)=>({
+      ...state,
+      placesMarkerList: [],
+      mainPathCoordinates: [],
+    }))
   }
 
   render(){
@@ -191,6 +196,16 @@ export default class App extends React.Component {
                 <div className={`container-sidebar-menu ${this.state.open ? 'show' : '' }`}>
                   <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
                     {this.state.open ? (<MdOutlineClose />) : (<MdMenu />)}
+                  </div>
+                  <div className='container-adresses'>
+                    <input type='text' placeholder='Digite o endereço 1' />
+                    <input type='text' placeholder='Digite o endereço 2' />
+                    <input type='text' placeholder='Digite o endereço 3' />
+                  </div>
+                  <div className='container-buttons'>
+                    <button className="info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
+                    <button className="primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
+                    <button className="error" onClick={() => this.clearMap()}>Limpar Mapa</button>
                   </div>
                 </div>
                 <MapContainer center={this.state.centerOfMap} zoom={18}>
