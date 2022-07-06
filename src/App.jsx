@@ -198,9 +198,9 @@ export default class App extends React.Component {
                     {this.state.open ? (<MdOutlineClose />) : (<MdMenu />)}
                   </div>
                   <div className='container-adresses'>
-                    <input type='text' placeholder='Digite o endereço 1' />
-                    <input type='text' placeholder='Digite o endereço 2' />
-                    <input type='text' placeholder='Digite o endereço 3' />
+                    <input type='text' placeholder='Digite o endereço' />
+                    <input type='text' placeholder='Digite o endereço' />
+                    <input type='text' placeholder='Digite o endereço' />
                   </div>
                   <div className='container-buttons'>
                     <button className="info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
