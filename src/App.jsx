@@ -40,7 +40,9 @@ export default class App extends React.Component {
         mainPathOptions: { color: 'black' },
         isEditing: false,
         editingMarker: 0,
-        open: false
+        menuIsOpen: false,
+        inputAdressList : [''],
+
     }
   }
   
@@ -65,7 +67,7 @@ export default class App extends React.Component {
   toogleMenu = () => {
     this.setState((state)=>({
       ...state,
-      open: !state.open
+      menuIsOpen: !state.menuIsOpen
     }))
   }
 
@@ -180,6 +182,38 @@ export default class App extends React.Component {
     }))
   }
 
+  handleAddressInputChange = (e, index)=>{
+    const {inputAdressList} = this.state
+    const updatedInputAdressList = [...inputAdressList].map((inputAdress, inputAdressIndex) =>{
+        if(inputAdressIndex === index){
+          return e.target.value
+        }
+        return inputAdress
+    })
+    this.setState((state)=>({
+      ...state,
+      inputAdressList: updatedInputAdressList
+    }))
+  }
+
+  addInputAddress = ()=> {
+    this.setState((state)=>({
+      ...state,
+      inputAdressList: [...state.inputAdressList, '']
+    }))
+  }
+
+  removeInputAddress = (index)=> {
+    const {inputAdressList} = this.state
+    const updatedInputAdressList = [...inputAdressList].filter((inputAdress, inputAdressIndex) => {
+      return inputAdressIndex !== index
+    })
+    this.setState((state)=>({
+      ...state,
+      inputAdressList: updatedInputAdressList
+    }))
+  }
+
   render(){
     return (
       <>
@@ -193,16 +227,27 @@ export default class App extends React.Component {
             <>
               <div className='main'>
                 <ToastContainer />
-                <div className={`container-sidebar-menu ${this.state.open ? 'show' : '' }`}>
+                <div className={`container-sidebar-menu ${this.state.menuIsOpen ? 'show' : '' }`}>
                   <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
-                    {this.state.open ? (<MdOutlineClose />) : (<MdMenu />)}
+                    {this.state.menuIsOpen ? (<MdOutlineClose />) : (<MdMenu />)}
                   </div>
                   <div className='container-adresses'>
-                    <div className='container-input'>
-                      <AiOutlineMinusCircle />
-                      <input type='text' placeholder='Digite o endereço' />
-                      <AiOutlinePlusCircle />
-                    </div>
+                    {
+                      this.state.inputAdressList.map((inputAddress, index)=>{
+                          return (
+                            <div className='container-input' key={`key_${index}_input`}>
+                              <AiOutlineMinusCircle className={`removeInputAddressIcon ${this.state.inputAdressList.length === 1 ? 'hidden' : ''}`} onClick={()=>this.removeInputAddress(index)}/>
+                              <input 
+                                type='text' 
+                                placeholder='Digite o endereço' 
+                                value={inputAddress} 
+                                onChange={(e)=>this.handleAddressInputChange(e, index)}
+                              />
+                              <AiOutlinePlusCircle className={'addInputAddressIcon'} onClick={()=>this.addInputAddress()}/>
+                            </div>
+                          )
+                      })
+                    }
                   </div>
                   <div className='container-buttons'>
                     <button className="btn-info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
