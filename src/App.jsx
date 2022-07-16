@@ -18,6 +18,7 @@ import 'leaflet/dist/leaflet.css';
 import './App.css';
 
 import { MdMenu, MdOutlineClose } from 'react-icons/md';
+import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 
 function ArrowPolyLine({polyLine, coords}) {
   const map = useMap()
@@ -172,7 +173,6 @@ export default class App extends React.Component {
   }
 
   clearMap = ()=> {
-    // document.location.reload(true);
     this.setState((state)=>({
       ...state,
       placesMarkerList: [],
@@ -198,9 +198,11 @@ export default class App extends React.Component {
                     {this.state.open ? (<MdOutlineClose />) : (<MdMenu />)}
                   </div>
                   <div className='container-adresses'>
-                    <input type='text' placeholder='Digite o endereço' />
-                    <input type='text' placeholder='Digite o endereço' />
-                    <input type='text' placeholder='Digite o endereço' />
+                    <div className='container-input'>
+                      <AiOutlineMinusCircle />
+                      <input type='text' placeholder='Digite o endereço' />
+                      <AiOutlinePlusCircle />
+                    </div>
                   </div>
                   <div className='container-buttons'>
                     <button className="btn-info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
