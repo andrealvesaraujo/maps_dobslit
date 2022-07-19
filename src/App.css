@@ -11,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  max-height: 100vh;
+  max-height: 90vh;
   transition: all 1s;
   padding: 20px;
 }
@@ -48,11 +48,29 @@
   align-items: center;
 }
 
+.container-adresses::-webkit-scrollbar {
+  width: 10px;
+}
+
+.container-adresses::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.container-adresses::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.container-adresses::-webkit-scrollbar-thumb:hover {
+  background: #989898;
+}
+
 .container-input {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 100%;
 }
 
