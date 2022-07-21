@@ -72,50 +72,60 @@ export default class App extends React.Component {
   }
 
   addMarker = (pointLat, pointLng, address) => {
-      let newPlaceMarker = [pointLat, pointLng]
-      const hasMarkerInList = this.state.placesMarkerList.some((marker)=>{
-        return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
+    let newPlaceMarker = [pointLat, pointLng]
+    const hasMarkerInList = this.state.placesMarkerList.some((marker)=>{
+      return marker.position[0] === newPlaceMarker[0] && marker.position[1] === newPlaceMarker[1]
+    })
+    
+    if(hasMarkerInList){
+      toast.error("Esse endereço já foi adicionado", {
+        theme: "colored", 
+        autoClose: 2500
       })
-      
-      if(hasMarkerInList){
-        toast.error("Esse endereço já foi adicionado", {
-          theme: "colored", 
-          autoClose: 2500
-        })
-        return
-      }
+      return
+    }
 
-      if(this.state.isEditing){
-        const editedPlacesMarkerList = [...this.state.placesMarkerList].map((marker) => {
-          if(marker === this.state.editingMarker){
-              const editedMarker = {
-                  ...marker,
-                  position: newPlaceMarker,
-                  address,
-              }
-              return editedMarker
-          }
-          return marker
-        })
-        this.setState((state)=> ({
-          ...state,
-          placesMarkerList: editedPlacesMarkerList,
-          mainPathCoordinates: []
-        }))
-        return
-      }
-
+    if(this.state.isEditing){
+      const editedPlacesMarkerList = [...this.state.placesMarkerList].map((marker) => {
+        if(marker === this.state.editingMarker){
+            const editedMarker = {
+                ...marker,
+                position: newPlaceMarker,
+                address,
+            }
+            return editedMarker
+        }
+        return marker
+      })
       this.setState((state)=> ({
         ...state,
-        placesMarkerList: [
-          ...state.placesMarkerList,
-          {
-            position: newPlaceMarker,
-            address
-          },
-        ],
+        placesMarkerList: editedPlacesMarkerList,
         mainPathCoordinates: []
-      }))
+      }), ()=>{
+          toast.success('Endereço atualizado com sucesso', {
+            theme: "colored", 
+            autoClose: 2500
+          })
+      })
+      return
+    }
+
+    this.setState((state)=> ({
+      ...state,
+      placesMarkerList: [
+        ...state.placesMarkerList,
+        {
+          position: newPlaceMarker,
+          address
+        },
+      ],
+      mainPathCoordinates: []
+    }), ()=>{
+      toast.success('Endereço adicionado com sucesso', {
+        theme: "colored", 
+        autoClose: 2500
+      })
+    })
   }
   
   makePolylinePath = async ()=>{
@@ -214,6 +224,19 @@ export default class App extends React.Component {
     }))
   }
 
+  searchInputAddresses = () => {
+    const {inputAdressList} = this.state
+    inputAdressList.forEach((inputAddress)=>{
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${inputAddress}&addressdetails=1`)
+        .then(res => res.json())
+        .then(results => {
+          if (results[0]) {
+            this.addMarker(results[0].lat, results[0].lon, results[0].address)
+          }
+      });
+    })
+  }
+
   render(){
     return (
       <>
@@ -250,7 +273,7 @@ export default class App extends React.Component {
                     }
                   </div>
                   <div className='container-buttons'>
-                    <button className="btn-info" onClick={() => console.log("Adicionando todos os endereços")}>Adicionar Endereços</button>
+                    <button className="btn-info" onClick={() => this.searchInputAddresses()}>Buscar Endereços</button>
                     <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
                     <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
                   </div>
