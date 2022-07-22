@@ -1,5 +1,4 @@
-import { TEST_API } from "./config"
-
+const TEST_API = "https://jh8nd3cgxb.execute-api.us-east-2.amazonaws.com/Beta"
 export default class MyApiService {
 
     static getMarkerPath = async () => {

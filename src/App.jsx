@@ -225,6 +225,10 @@ export default class App extends React.Component {
   }
 
   searchInputAddresses = () => {
+    this.setState({
+      placesMarkerList: [],
+      mainPathCoordinates: [],
+    })
     const {inputAdressList} = this.state
     inputAdressList.forEach((inputAddress)=>{
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${inputAddress}&addressdetails=1`)
