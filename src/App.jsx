@@ -162,8 +162,8 @@ export default class App extends React.Component {
 
   handleEdit = (marker)=>{
       const address = marker.address;
-      document.querySelector('input').value = `${address.country}, ${address.city}, ${address.road}, ${address.house_number}`
-      document.querySelector('input').focus()
+      document.querySelector('input.glass').value = `${address.country}, ${address.city}, ${address.road}, ${address.house_number}`
+      document.querySelector('input.glass').focus()
       this.setState((state) => ({
         ...state,
         isEditing: true,
