@@ -125,6 +125,7 @@ export default class App extends React.Component {
         theme: "colored", 
         autoClose: 2500
       })
+      this.state.map.setView(newPlaceMarker, this.state.map.getMaxZoom(), false)
     })
   }
   
@@ -282,7 +283,7 @@ export default class App extends React.Component {
                     <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
                   </div>
                 </div>
-                <MapContainer center={this.state.centerOfMap} zoom={18}>
+                <MapContainer whenCreated={map => this.setState({ map })} center={this.state.centerOfMap} zoom={18}>
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
