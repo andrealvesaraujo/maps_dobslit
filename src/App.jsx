@@ -49,6 +49,10 @@ export default class App extends React.Component {
   }
   
   componentDidMount() {
+    this.setState({
+      ...this.state,
+      isLogged: window.sessionStorage.getItem("isLogged"),
+    })
     navigator.geolocation.getCurrentPosition((position) => {
         this.setState((state) => ({
           ...state,
@@ -244,7 +248,6 @@ export default class App extends React.Component {
     })
   }
 
-  //Salvar no session storage
   handleLoggin = (e)=> {
     e.preventDefault()
     if(!this.state.login || !this.state.password ){
@@ -259,6 +262,7 @@ export default class App extends React.Component {
         ...this.state,
         isLogged:true,
       })
+      window.sessionStorage.setItem("isLogged", true);
       return
     }
     toast.error("Login e Senha incorretos", {
