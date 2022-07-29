@@ -349,7 +349,7 @@ export default class App extends React.Component {
             )      
         ) : (
           <>
-            <form method="post">
+            <form method="post" className="container-login">
               <label>Login</label>
               <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
               <label>Senha</label>
