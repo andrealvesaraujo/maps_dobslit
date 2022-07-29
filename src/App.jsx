@@ -42,7 +42,9 @@ export default class App extends React.Component {
         editingMarker: 0,
         menuIsOpen: false,
         inputAdressList : [''],
-
+        isLogged: false,
+        login: '',
+        password: ''
     }
   }
   
@@ -242,79 +244,114 @@ export default class App extends React.Component {
     })
   }
 
+  //Salvar no session storage
+  handleLoggin = (e)=> {
+    e.preventDefault()
+    if(!this.state.login || !this.state.password ){
+      console.log("Preencha o login e a senha")
+      return
+    }
+    if(this.state.login === "dobslitmaps" && this.state.password === "dobslitmaps123"){
+      this.setState({
+        ...this.state,
+        isLogged:true,
+      })
+      return
+    }
+    console.log("Login e Senha incorretos")
+  }
+
+  handleOnInputChange = (e) =>{
+    this.setState({
+       ...this.state,
+      [e.target.name] : e.target.value
+    })
+  }
+
   render(){
     return (
       <>
-        { this.state.isLoading 
-          ? 
-          (
-            <Spinner />
-          )
-          : 
-          (
-            <>
-              <div className='main'>
-                <ToastContainer />
-                <div className={`container-sidebar-menu ${this.state.menuIsOpen ? 'show' : '' }`}>
-                  <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
-                    {this.state.menuIsOpen ? (<MdOutlineClose />) : (<MdMenu />)}
+        {this.state.isLogged ? (
+          this.state.isLoading 
+            ? 
+            (
+              <Spinner />
+            )
+            : 
+            (
+              <>
+                <div className='main'>
+                  <ToastContainer />
+                  <div className={`container-sidebar-menu ${this.state.menuIsOpen ? 'show' : '' }`}>
+                    <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
+                      {this.state.menuIsOpen ? (<MdOutlineClose />) : (<MdMenu />)}
+                    </div>
+                    <div className='container-adresses'>
+                      {
+                        this.state.inputAdressList.map((inputAddress, index)=>{
+                            return (
+                              <div className='container-input' key={`key_${index}_input`}>
+                                <AiOutlineMinusCircle className={`removeInputAddressIcon ${this.state.inputAdressList.length === 1 ? 'hidden' : ''}`} onClick={()=>this.removeInputAddress(index)}/>
+                                <input 
+                                  type='text' 
+                                  placeholder='Digite o endereço' 
+                                  value={inputAddress} 
+                                  onChange={(e)=>this.handleAddressInputChange(e, index)}
+                                />
+                                <AiOutlinePlusCircle className={'addInputAddressIcon'} onClick={()=>this.addInputAddress()}/>
+                              </div>
+                            )
+                        })
+                      }
+                    </div>
+                    <div className='container-buttons'>
+                      <button className="btn-info" onClick={() => this.searchInputAddresses()}>Buscar Endereços</button>
+                      <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
+                      <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
+                    </div>
                   </div>
-                  <div className='container-adresses'>
-                    {
-                      this.state.inputAdressList.map((inputAddress, index)=>{
-                          return (
-                            <div className='container-input' key={`key_${index}_input`}>
-                              <AiOutlineMinusCircle className={`removeInputAddressIcon ${this.state.inputAdressList.length === 1 ? 'hidden' : ''}`} onClick={()=>this.removeInputAddress(index)}/>
-                              <input 
-                                type='text' 
-                                placeholder='Digite o endereço' 
-                                value={inputAddress} 
-                                onChange={(e)=>this.handleAddressInputChange(e, index)}
-                              />
-                              <AiOutlinePlusCircle className={'addInputAddressIcon'} onClick={()=>this.addInputAddress()}/>
-                            </div>
-                          )
-                      })
-                    }
-                  </div>
-                  <div className='container-buttons'>
-                    <button className="btn-info" onClick={() => this.searchInputAddresses()}>Buscar Endereços</button>
-                    <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
-                    <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
-                  </div>
+                  <MapContainer whenCreated={map => this.setState({ map })} center={this.state.centerOfMap} zoom={18}>
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <SearchNewMarker handlerAddMarker={this.addMarker} />
+                    {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
+                    <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
+                    {this.state.placesMarkerList.map((marker, index, arr) => {
+                      return (
+                        <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
+                          <Popup>
+                            <div className='result-popup-container'>
+                              <div className='result-popup-adress-text'>
+                                {marker.address.country ? `${marker.address.country} - `  : ' '}
+                                {marker.address.city ? `${marker.address.city} - ` : ' '}
+                                {marker.address.road ? `${marker.address.road} -  ` : ' '}
+                                {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
+                                {marker.address.postcode? `${marker.address.postcode}` : ' '}
+                              </div>
+                              <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
+                              <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
+                            </div>                       
+                          </Popup>
+                          <Tooltip>Ponto {index+1}</Tooltip>
+                        </Marker>
+                      );
+                    })}
+                  </MapContainer>
                 </div>
-                <MapContainer whenCreated={map => this.setState({ map })} center={this.state.centerOfMap} zoom={18}>
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <SearchNewMarker handlerAddMarker={this.addMarker} />
-                  {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
-                  <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
-                  {this.state.placesMarkerList.map((marker, index, arr) => {
-                    return (
-                      <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
-                        <Popup>
-                          <div className='result-popup-container'>
-                            <div className='result-popup-adress-text'>
-                              {marker.address.country ? `${marker.address.country} - `  : ' '}
-                              {marker.address.city ? `${marker.address.city} - ` : ' '}
-                              {marker.address.road ? `${marker.address.road} -  ` : ' '}
-                              {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
-                              {marker.address.postcode? `${marker.address.postcode}` : ' '}
-                            </div>
-                            <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
-                            <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
-                          </div>                       
-                        </Popup>
-                        <Tooltip>Ponto {index+1}</Tooltip>
-                      </Marker>
-                    );
-                  })}
-                </MapContainer>
-              </div>
-            </>
-          )
-        }
+              </>
+            )      
+        ) : (
+          <>
+            <form>
+              <label>Login</label>
+              <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
+              <label>Senha</label>
+              <input type='password' name='password' onChange={(e)=> this.handleOnInputChange(e)} />
+              <button type='submit' onClick={(e)=>this.handleLoggin(e)}>Logar</button>          
+            </form>
+          </>
+        )}        
       </>
     );
   }
