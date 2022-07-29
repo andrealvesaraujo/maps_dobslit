@@ -248,7 +248,10 @@ export default class App extends React.Component {
   handleLoggin = (e)=> {
     e.preventDefault()
     if(!this.state.login || !this.state.password ){
-      console.log("Preencha o login e a senha")
+      toast.error("Preencha o login e a senha", {
+        theme: "colored", 
+        autoClose: 2500
+      })
       return
     }
     if(this.state.login === "dobslitmaps" && this.state.password === "dobslitmaps123"){
@@ -258,7 +261,10 @@ export default class App extends React.Component {
       })
       return
     }
-    console.log("Login e Senha incorretos")
+    toast.error("Login e Senha incorretos", {
+      theme: "colored", 
+      autoClose: 2500
+    })
   }
 
   handleOnInputChange = (e) =>{
@@ -271,6 +277,7 @@ export default class App extends React.Component {
   render(){
     return (
       <>
+        <ToastContainer />
         {this.state.isLogged ? (
           this.state.isLoading 
             ? 
@@ -281,7 +288,6 @@ export default class App extends React.Component {
             (
               <>
                 <div className='main'>
-                  <ToastContainer />
                   <div className={`container-sidebar-menu ${this.state.menuIsOpen ? 'show' : '' }`}>
                     <div className='hamburger-icon' onClick={()=> this.toogleMenu()}>
                       {this.state.menuIsOpen ? (<MdOutlineClose />) : (<MdMenu />)}
@@ -343,7 +349,7 @@ export default class App extends React.Component {
             )      
         ) : (
           <>
-            <form>
+            <form method="post">
               <label>Login</label>
               <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
               <label>Senha</label>
