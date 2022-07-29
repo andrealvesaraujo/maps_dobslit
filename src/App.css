@@ -1,5 +1,49 @@
 @import '~leaflet/dist/leaflet.css';
 
+.container-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #dfe0e2;
+  height: 100vh;
+}
+
+
+.container-login label {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.container-login input {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #000;
+  outline: none;
+}
+
+
+.container-login button{
+    padding: 10px;
+    background-color: #3580dc;
+    border-radius: 10px;
+    border: 1px solid #3580dc;
+    color: white;
+    cursor: pointer;
+    width: 100px;
+    transition: all 0.5s;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+
+.container-login button:hover {
+  opacity: 0.75;
+}
+
+
+
 .main {
   display: flex;
 }
