@@ -8,14 +8,14 @@ import {
 
 import { ToastContainer, toast } from 'react-toastify';
 import MyApiService from './services/MyApiService';
-import Spinner from './components/Spinner'
+import Loading from './components/Loading'
 import {SearchNewMarker} from './components/SearchNewMarker'
 import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
 import 'leaflet-arrowheads';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
-import './App.css';
+import './App.scss';
 
 import { MdMenu, MdOutlineClose } from 'react-icons/md';
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
@@ -286,7 +286,7 @@ export default class App extends React.Component {
           this.state.isLoading 
             ? 
             (
-              <Spinner />
+              <Loading />
             )
             : 
             (
@@ -331,8 +331,8 @@ export default class App extends React.Component {
                       return (
                         <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
                           <Popup>
-                            <div className='result-popup-container'>
-                              <div className='result-popup-adress-text'>
+                            <div className='container-popup'>
+                              <div className='popup-text'>
                                 {marker.address.country ? `${marker.address.country} - `  : ' '}
                                 {marker.address.city ? `${marker.address.city} - ` : ' '}
                                 {marker.address.road ? `${marker.address.road} -  ` : ' '}

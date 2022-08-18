@@ -1,0 +1,25 @@
+.leaflet-container {
+    
+    .leaflet-geosearch-bar {
+        width: 500px;
+        margin-top: 50px;
+
+        form {
+            padding: 0;
+            
+            input {
+                font-size: 16px;  
+                height: 40px;
+            }
+        }
+
+        a.reset {
+            line-height: 40px;
+            font-size: 30px;
+        }
+        
+        .results > * {
+            font-size: 16px;  
+        }
+    }    
+}
