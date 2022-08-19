@@ -1,24 +1,22 @@
 import React from 'react';
+
 import L from 'leaflet';
-import { 
-  MapContainer, Polyline,
-  Popup, Tooltip, TileLayer, 
-  Marker, useMap
-} from 'react-leaflet'
+import { MapContainer, Polyline, Popup, Tooltip, TileLayer, Marker, useMap } from 'react-leaflet'
+import 'leaflet-arrowheads';
+import 'leaflet/dist/leaflet.css';
 
 import { ToastContainer, toast } from 'react-toastify';
-import MyApiService from './services/MyApiService';
-import Loading from './components/Loading'
-import {SearchNewMarker} from './components/SearchNewMarker'
-import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
-import 'leaflet-arrowheads';
-
 import 'react-toastify/dist/ReactToastify.css';
-import 'leaflet/dist/leaflet.css';
-import './App.scss';
 
 import { MdMenu, MdOutlineClose } from 'react-icons/md';
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
+
+import MyApiService from './services/MyApiService';
+import Loading from './components/Loading'
+import SearchNewMarker from './components/SearchNewMarker'
+import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
+
+import './App.scss';
 
 function ArrowPolyLine({polyLine, coords}) {
   const map = useMap()
