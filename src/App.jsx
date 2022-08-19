@@ -17,6 +17,7 @@ import SearchNewMarker from './components/SearchNewMarker'
 import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
 
 import './App.scss';
+import Button from './components/Button';
 
 function ArrowPolyLine({polyLine, coords}) {
   const map = useMap()
@@ -35,7 +36,6 @@ export default class App extends React.Component {
         polyline: null,
         isLoading: true,
         centerOfMap: [],
-        mainPathOptions: { color: 'black' },
         isEditing: false,
         editingMarker: 0,
         menuIsOpen: false,
@@ -313,9 +313,9 @@ export default class App extends React.Component {
                       }
                     </div>
                     <div className='container-buttons'>
-                      <button className="btn-info" onClick={() => this.searchInputAddresses()}>Buscar Endereços</button>
-                      <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
-                      <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
+                      <Button className="btn-info large" onClick={() => this.searchInputAddresses()}>Buscar Endereços</Button>
+                      <Button className="btn-primary large" onClick={() => this.makePolylinePath()}>Criar Caminho</Button>
+                      <Button className="btn-error large"  onClick={() => this.clearMap()}>Limpar Mapa</Button>
                     </div>
                   </div>
                   <MapContainer whenCreated={map => this.setState({ map })} center={this.state.centerOfMap} zoom={18}>
@@ -323,7 +323,6 @@ export default class App extends React.Component {
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <SearchNewMarker handlerAddMarker={this.addMarker} />
-                    {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
                     <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
                     {this.state.placesMarkerList.map((marker, index, arr) => {
                       return (
@@ -337,8 +336,9 @@ export default class App extends React.Component {
                                 {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
                                 {marker.address.postcode? `${marker.address.postcode}` : ' '}
                               </div>
-                              <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
-                              <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
+                              <Button className='btn-info small' onClick={() => this.handleEdit(marker)}>Editar</Button>
+                              <Button className='btn-error small' onClick={() => this.handleDelete(index)}>Excluir</Button>
+
                             </div>                       
                           </Popup>
                           <Tooltip>Ponto {index+1}</Tooltip>
@@ -356,7 +356,7 @@ export default class App extends React.Component {
               <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
               <label>Senha</label>
               <input type='password' name='password' onChange={(e)=> this.handleOnInputChange(e)} />
-              <button type='submit' onClick={(e)=>this.handleLoggin(e)}>Logar</button>          
+              <Button className="btn-info" type='button' onClick={(e)=>this.handleLoggin(e)}>Logar</Button>        
             </form>
           </>
         )}        
