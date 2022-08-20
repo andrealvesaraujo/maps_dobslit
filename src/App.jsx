@@ -230,6 +230,16 @@ export default class App extends React.Component {
       mainPathCoordinates: [],
     })
     const {inputAdressList} = this.state
+    const hasAllInputAddressesEmpty = inputAdressList.every(inputAdress => {
+      return inputAdress === ''
+    })
+    if(hasAllInputAddressesEmpty){
+      toast.error("Precisa digitar pelo menos um endereço", {
+        theme: "colored", 
+        autoClose: 2500
+      })
+      return
+    }
     inputAdressList.forEach((inputAddress)=>{
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${inputAddress}&addressdetails=1`)
         .then(res => res.json())
