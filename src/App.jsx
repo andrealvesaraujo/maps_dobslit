@@ -37,7 +37,7 @@ export default class App extends React.Component {
         isLoading: true,
         centerOfMap: [],
         isEditing: false,
-        editingMarker: 0,
+        editingMarker: null,
         menuIsOpen: false,
         inputAdressList : [''],
         isLogged: false,
@@ -104,7 +104,9 @@ export default class App extends React.Component {
       this.setState((state)=> ({
         ...state,
         placesMarkerList: editedPlacesMarkerList,
-        mainPathCoordinates: []
+        mainPathCoordinates: [],
+        isEditing: false,
+        editingMarker: null
       }), ()=>{
           toast.success('Endereço atualizado com sucesso', {
             theme: "colored", 
@@ -113,7 +115,6 @@ export default class App extends React.Component {
       })
       return
     }
-
     this.setState((state)=> ({
       ...state,
       placesMarkerList: [
