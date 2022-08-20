@@ -15,6 +15,7 @@ import MyApiService from './services/MyApiService';
 import Loading from './components/Loading'
 import SearchNewMarker from './components/SearchNewMarker'
 import Button from './components/Button';
+import LoginForm from './components/LoginForm';
 import {greenMarker, redMarker, defaultMarker} from './utils/markersTypes'
 import ArrowPolyLine from './components/ArrowPolyLine';
 
@@ -35,8 +36,6 @@ export default class App extends React.Component {
         menuIsOpen: false,
         inputAdressList : [''],
         isLogged: false,
-        login: '',
-        password: ''
     }
   }
   
@@ -251,33 +250,10 @@ export default class App extends React.Component {
     })
   }
 
-  handleLoggin = (e)=> {
-    e.preventDefault()
-    if(!this.state.login || !this.state.password ){
-      toast.error("Preencha o login e a senha", {
-        theme: "colored", 
-        autoClose: 2500
-      })
-      return
-    }
-    if(this.state.login === "dobslitmaps" && this.state.password === "dobslitmaps123"){
-      this.setState({
-        ...this.state,
-        isLogged:true,
-      })
-      window.sessionStorage.setItem("isLogged", true);
-      return
-    }
-    toast.error("Login e Senha incorretos", {
-      theme: "colored", 
-      autoClose: 2500
-    })
-  }
-
-  handleOnInputChange = (e) =>{
+  handleIsLoggedState = () =>{
     this.setState({
-       ...this.state,
-      [e.target.name] : e.target.value
+      ...this.state,
+      isLogged:true,
     })
   }
 
@@ -355,15 +331,7 @@ export default class App extends React.Component {
               </>
             )      
         ) : (
-          <>
-            <form method="post" className="container-login">
-              <label>Login</label>
-              <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
-              <label>Senha</label>
-              <input type='password' name='password' onChange={(e)=> this.handleOnInputChange(e)} />
-              <Button className="btn-info" type='button' onClick={(e)=>this.handleLoggin(e)}>Logar</Button>        
-            </form>
-          </>
+          <LoginForm updateMapState={this.handleIsLoggedState}/>
         )}        
       </>
     );
