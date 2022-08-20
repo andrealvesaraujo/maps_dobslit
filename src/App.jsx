@@ -15,7 +15,7 @@ import MyApiService from './services/MyApiService';
 import Loading from './components/Loading'
 import SearchNewMarker from './components/SearchNewMarker'
 import Button from './components/Button';
-import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
+import {greenMarker, redMarker, defaultMarker} from './utils/markersTypes'
 import ArrowPolyLine from './components/ArrowPolyLine';
 
 import './App.scss';
@@ -321,7 +321,7 @@ export default class App extends React.Component {
                     <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
                     {this.state.placesMarkerList.map((marker, index, arr) => {
                       return (
-                        <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
+                        <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? greenMarker : (index === arr.length - 1 ? redMarker : defaultMarker)}>
                           <Popup>
                             <div className='container-popup'>
                               <div className='popup-text'>
