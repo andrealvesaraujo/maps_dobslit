@@ -1,7 +1,7 @@
 import React from 'react';
 
 import L from 'leaflet';
-import { MapContainer, Polyline, Popup, Tooltip, TileLayer, Marker, useMap } from 'react-leaflet'
+import { MapContainer, Popup, Tooltip, TileLayer, Marker } from 'react-leaflet'
 import 'leaflet-arrowheads';
 import 'leaflet/dist/leaflet.css';
 
@@ -14,17 +14,11 @@ import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import MyApiService from './services/MyApiService';
 import Loading from './components/Loading'
 import SearchNewMarker from './components/SearchNewMarker'
+import Button from './components/Button';
 import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
+import ArrowPolyLine from './components/ArrowPolyLine';
 
 import './App.scss';
-import Button from './components/Button';
-
-function ArrowPolyLine({polyLine, coords}) {
-  const map = useMap()
-  if (!polyLine) return null
-  coords.length > 0 ? polyLine.arrowheads({frequency: 'endonly', size: '20px'}).addTo(map) : polyLine.arrowheads().remove()
-  return null
-}
 
 export default class App extends React.Component {
 
