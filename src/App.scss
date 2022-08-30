@@ -1,45 +1,5 @@
 @import '~leaflet/dist/leaflet.css';
 
-.container-login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #dfe0e2;
-  height: 100vh;
-
-  label {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 15px 0;
-  }
-
-  input {
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #000;
-    outline: none;
-  }
-
-  button {
-    padding: 10px;
-    background-color: #3580dc;
-    border-radius: 10px;
-    border: 1px solid #3580dc;
-    color: white;
-    cursor: pointer;
-    width: 100px;
-    transition: all 0.5s;
-    margin-top: 15px;
-    font-weight: bold;
-  }
-
-  button:hover {
-    opacity: 0.75;
-  }
-  
-}
-
 .main {
   display: flex;
 
@@ -76,6 +36,10 @@
       } 
     }
 
+    button:nth-child(2) {
+      margin: 15px 0;
+    }
+    
     .container-adresses {
       display: flex;
       flex-direction: column;
@@ -139,51 +103,7 @@
     .container-buttons {
       display: flex;
       flex-direction: column;
-      width: 100%;
-  
-      .btn-info {
-        padding:15px;
-        background-color:#3580dc;
-        border-radius: 30px;
-        border: 1px solid #3580dc;
-        color: white;
-        cursor: pointer;
-        transition:all 1s;
-  
-        &:hover {
-          opacity: 0.5;
-        }
-      }
-  
-      .btn-primary {
-        padding:15px;
-        background-color:#28a745;
-        border-radius: 30px;
-        border: 1px solid #28a745;
-        color: white;
-        cursor: pointer;
-        margin: 15px 0;
-        transition:all 1s;
-  
-        &:hover {
-          opacity: 0.5;
-        }
-      }
-  
-      .btn-error {
-        padding:15px;
-        background-color:#dc3545;
-        border-radius: 30px;
-        border: 1px solid #dc3545;
-        color: white;
-        cursor: pointer;
-        transition:all 1s;
-  
-        &:hover {
-          opacity: 0.5;
-        }
-      }
-  
+      width: 100%;  
     }
   
   }
@@ -202,27 +122,9 @@
     .popup-text {
       font-size: 16px;
       margin-bottom: 15px;
-    } 
-    
-    .btn-edit {
-      font-size: 14px;
-      padding: 10px;
-      background-color:#007bff;
-      border-radius: 10px;
-      border: 1px solid #007bff;
-      color: white;
-      cursor: pointer;
-      margin-left: 10px;
     }
 
-    .btn-delete {
-      font-size: 14px;
-      padding: 10px;
-      background-color:#dc3545;
-      border-radius: 10px;
-      border: 1px solid #dc3545;
-      color: white;
-      cursor: pointer;
+    button:last-child {
       margin-left: 10px;
     }
   }

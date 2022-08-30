@@ -1,0 +1,27 @@
+.container-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #dfe0e2;
+    height: 100vh;
+  
+    label {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+  
+    input {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #000;
+      outline: none;
+    }
+  
+    button {
+      width: 100px;
+      margin-top: 15px;
+    }
+    
+}
