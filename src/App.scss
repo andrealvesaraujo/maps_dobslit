@@ -1,0 +1,132 @@
+@import '~leaflet/dist/leaflet.css';
+
+.main {
+  display: flex;
+
+  .container-sidebar-menu  {
+    width: 3%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-height: 90vh;
+    transition: all 1s;
+    padding: 20px;
+
+    .hamburger-icon {
+      width: 100%;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      font-size: 35px;
+      cursor: pointer;
+    }
+
+    .container-adresses, .container-buttons  {
+      transition: opacity 0.5s;
+      opacity: 0;
+    } 
+
+    &.show {
+      width: 25%;
+      
+      .container-adresses, .container-buttons  {
+        opacity: 1;
+      } 
+    }
+
+    button:nth-child(2) {
+      margin: 15px 0;
+    }
+    
+    .container-adresses {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 80%;
+      width: 100%;
+      align-items: center;
+  
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        background: #989898;
+      }
+  
+      .container-input {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        justify-content: space-evenly;
+        width: 100%;
+    
+        .removeInputAddressIcon, .addInputAddressIcon {
+          font-size: 25px;
+          cursor: pointer;
+        }
+        
+        .removeInputAddressIcon:hover {
+          fill:red;
+          transition: all 0.25s;
+        }
+    
+        .addInputAddressIcon:hover {
+          fill:green;
+          transition: all 0.25s;
+        }
+    
+        .hidden {
+          visibility: hidden;
+        }
+    
+        input{
+          font-size: 16px;
+          width: 75%;
+          padding: 10px;
+          border-radius: 15px;
+          border: 1px solid #000;
+          outline: none;
+        }
+      }
+    }
+  
+    .container-buttons {
+      display: flex;
+      flex-direction: column;
+      width: 100%;  
+    }
+  
+  }
+
+  .leaflet-container {
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+  }
+
+  .container-popup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .popup-text {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button:last-child {
+      margin-left: 10px;
+    }
+  }
+
+}
