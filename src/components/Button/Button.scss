@@ -1,0 +1,40 @@
+button {
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 1s;
+    background-color:#000000;
+    border: 1px solid #000000;
+}
+
+button:hover {
+    opacity: 0.5;
+}
+
+.small {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.large {
+    padding:15px;
+    border-radius: 30px;
+    font-size: 16px;
+}
+  
+.btn-info {
+    background-color:#3580dc;
+    border: 1px solid #3580dc;
+}
+
+.btn-primary {
+    background-color:#28a745;
+    border: 1px solid #28a745;
+}
+
+.btn-error {
+    background-color:#dc3545;
+    border: 1px solid #dc3545;
+}

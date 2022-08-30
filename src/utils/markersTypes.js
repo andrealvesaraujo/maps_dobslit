@@ -18,14 +18,14 @@ const sharedMarkerProps = {
   tooltipAnchor: [16, -28],
 }
 
-export const startedMarker = new L.Icon({
+export const greenMarker = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   ...sharedMarkerProps,
 });
 
-export const targetMarker = new L.Icon({
+export const redMarker = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   ...sharedMarkerProps,
 });
 
-export const normalMarker = new L.Icon.Default()
+export const defaultMarker = new L.Icon.Default()

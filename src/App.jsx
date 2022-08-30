@@ -1,31 +1,25 @@
 import React from 'react';
+
 import L from 'leaflet';
-import { 
-  MapContainer, Polyline,
-  Popup, Tooltip, TileLayer, 
-  Marker, useMap
-} from 'react-leaflet'
+import { MapContainer, Popup, Tooltip, TileLayer, Marker } from 'react-leaflet'
+import 'leaflet-arrowheads';
+import 'leaflet/dist/leaflet.css';
 
 import { ToastContainer, toast } from 'react-toastify';
-import MyApiService from './services/MyApiService';
-import Spinner from './components/Spinner'
-import {SearchNewMarker} from './components/SearchNewMarker'
-import {startedMarker, targetMarker, normalMarker} from './utils/markersUtils'
-import 'leaflet-arrowheads';
-
 import 'react-toastify/dist/ReactToastify.css';
-import 'leaflet/dist/leaflet.css';
-import './App.css';
 
 import { MdMenu, MdOutlineClose } from 'react-icons/md';
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 
-function ArrowPolyLine({polyLine, coords}) {
-  const map = useMap()
-  if (!polyLine) return null
-  coords.length > 0 ? polyLine.arrowheads({frequency: 'endonly', size: '20px'}).addTo(map) : polyLine.arrowheads().remove()
-  return null
-}
+import MyApiService from './services/MyApiService';
+import Loading from './components/Loading'
+import SearchNewMarker from './components/SearchNewMarker'
+import Button from './components/Button';
+import LoginForm from './components/LoginForm';
+import {greenMarker, redMarker, defaultMarker} from './utils/markersTypes'
+import ArrowPolyLine from './components/ArrowPolyLine';
+
+import './App.scss';
 
 export default class App extends React.Component {
 
@@ -37,14 +31,11 @@ export default class App extends React.Component {
         polyline: null,
         isLoading: true,
         centerOfMap: [],
-        mainPathOptions: { color: 'black' },
         isEditing: false,
-        editingMarker: 0,
+        editingMarker: null,
         menuIsOpen: false,
         inputAdressList : [''],
         isLogged: false,
-        login: '',
-        password: ''
     }
   }
   
@@ -106,7 +97,9 @@ export default class App extends React.Component {
       this.setState((state)=> ({
         ...state,
         placesMarkerList: editedPlacesMarkerList,
-        mainPathCoordinates: []
+        mainPathCoordinates: [],
+        isEditing: false,
+        editingMarker: null
       }), ()=>{
           toast.success('Endereço atualizado com sucesso', {
             theme: "colored", 
@@ -115,7 +108,6 @@ export default class App extends React.Component {
       })
       return
     }
-
     this.setState((state)=> ({
       ...state,
       placesMarkerList: [
@@ -237,6 +229,16 @@ export default class App extends React.Component {
       mainPathCoordinates: [],
     })
     const {inputAdressList} = this.state
+    const hasAllInputAddressesEmpty = inputAdressList.every(inputAdress => {
+      return inputAdress === ''
+    })
+    if(hasAllInputAddressesEmpty){
+      toast.error("Precisa digitar pelo menos um endereço", {
+        theme: "colored", 
+        autoClose: 2500
+      })
+      return
+    }
     inputAdressList.forEach((inputAddress)=>{
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${inputAddress}&addressdetails=1`)
         .then(res => res.json())
@@ -248,33 +250,10 @@ export default class App extends React.Component {
     })
   }
 
-  handleLoggin = (e)=> {
-    e.preventDefault()
-    if(!this.state.login || !this.state.password ){
-      toast.error("Preencha o login e a senha", {
-        theme: "colored", 
-        autoClose: 2500
-      })
-      return
-    }
-    if(this.state.login === "dobslitmaps" && this.state.password === "dobslitmaps123"){
-      this.setState({
-        ...this.state,
-        isLogged:true,
-      })
-      window.sessionStorage.setItem("isLogged", true);
-      return
-    }
-    toast.error("Login e Senha incorretos", {
-      theme: "colored", 
-      autoClose: 2500
-    })
-  }
-
-  handleOnInputChange = (e) =>{
+  handleIsLoggedState = () =>{
     this.setState({
-       ...this.state,
-      [e.target.name] : e.target.value
+      ...this.state,
+      isLogged:true,
     })
   }
 
@@ -286,7 +265,7 @@ export default class App extends React.Component {
           this.state.isLoading 
             ? 
             (
-              <Spinner />
+              <Loading />
             )
             : 
             (
@@ -315,9 +294,9 @@ export default class App extends React.Component {
                       }
                     </div>
                     <div className='container-buttons'>
-                      <button className="btn-info" onClick={() => this.searchInputAddresses()}>Buscar Endereços</button>
-                      <button className="btn-primary" onClick={() => this.makePolylinePath()}>Criar Caminho</button>
-                      <button className="btn-error"  onClick={() => this.clearMap()}>Limpar Mapa</button>
+                      <Button className="btn-info large" onClick={() => this.searchInputAddresses()}>Buscar Endereços</Button>
+                      <Button className="btn-primary large" onClick={() => this.makePolylinePath()}>Criar Caminho</Button>
+                      <Button className="btn-error large"  onClick={() => this.clearMap()}>Limpar Mapa</Button>
                     </div>
                   </div>
                   <MapContainer whenCreated={map => this.setState({ map })} center={this.state.centerOfMap} zoom={18}>
@@ -325,22 +304,22 @@ export default class App extends React.Component {
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://dobslit.com/">Dobslit</a>'
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <SearchNewMarker handlerAddMarker={this.addMarker} />
-                    {/* <Polyline pathOptions={this.state.mainPathOptions} positions={this.state.mainPathCoordinates} /> */}
                     <ArrowPolyLine polyLine={this.state.polyline} coords={this.state.mainPathCoordinates}/>
                     {this.state.placesMarkerList.map((marker, index, arr) => {
                       return (
-                        <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? startedMarker : (index === arr.length - 1 ? targetMarker : normalMarker)}>
+                        <Marker key={`key_${index}`} position={marker.position} icon={index === 0 ? greenMarker : (index === arr.length - 1 ? redMarker : defaultMarker)}>
                           <Popup>
-                            <div className='result-popup-container'>
-                              <div className='result-popup-adress-text'>
+                            <div className='container-popup'>
+                              <div className='popup-text'>
                                 {marker.address.country ? `${marker.address.country} - `  : ' '}
                                 {marker.address.city ? `${marker.address.city} - ` : ' '}
                                 {marker.address.road ? `${marker.address.road} -  ` : ' '}
                                 {marker.address.house_number? `${marker.address.house_number} - ` : ' '}
                                 {marker.address.postcode? `${marker.address.postcode}` : ' '}
                               </div>
-                              <button className='btn-edit' onClick={() => this.handleEdit(marker)}>Editar</button>
-                              <button className='btn-delete' onClick={() => this.handleDelete(index)}>Excluir</button>
+                              <Button className='btn-info small' onClick={() => this.handleEdit(marker)}>Editar</Button>
+                              <Button className='btn-error small' onClick={() => this.handleDelete(index)}>Excluir</Button>
+
                             </div>                       
                           </Popup>
                           <Tooltip>Ponto {index+1}</Tooltip>
@@ -352,15 +331,7 @@ export default class App extends React.Component {
               </>
             )      
         ) : (
-          <>
-            <form method="post" className="container-login">
-              <label>Login</label>
-              <input type='text' name='login' onChange={(e)=> this.handleOnInputChange(e)} />
-              <label>Senha</label>
-              <input type='password' name='password' onChange={(e)=> this.handleOnInputChange(e)} />
-              <button type='submit' onClick={(e)=>this.handleLoggin(e)}>Logar</button>          
-            </form>
-          </>
+          <LoginForm updateMapState={this.handleIsLoggedState}/>
         )}        
       </>
     );
